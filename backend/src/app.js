@@ -12,7 +12,7 @@ app.use(express.json())
 const notesRouter = require("./routes/notes")
 
 // Use Routers
-app.use("/", notesRouter)
+app.use("/api", notesRouter)
 
 connectDB()
   .then(() => {

@@ -3,7 +3,7 @@ const router = express.Router()
 const Note = require("../models/note")
 
 // Create Note
-router.post("/create", async(req,res) => {
+router.post("/notes/create", async(req,res) => {
   try {
     const {title, description} = req.body
 
@@ -31,7 +31,7 @@ router.post("/create", async(req,res) => {
     const data = await note.save()
     res.json({message: "Note created successfully", data})
   } catch (err){
-    res.status(500).json({message: "Error creating notes"})
+    res.status(500).json({message: "Error creating note"})
   }
 })
 
@@ -39,10 +39,29 @@ router.post("/create", async(req,res) => {
 router.get("/notes", async(req,res) => {
   try {
     const notes = await Note.find()
-    res.json({notes})
+    res.json({message: "Fetched all the notes successfully", data: notes})
   } catch (err){
-    res.status(500).json({message: "Error creating notes"})
+    res.status(500).json({message: "Error fetching notes"})
+  }
+})
+
+// Update Notes
+router.put("/notes/edit/:id", async(req,res) => {
+  try{
+    const {title, description,}  = req.body
+    // findByIdAndUpdate takes  3 arguments: (id, updateObject, options)
+    const updateNote = await Note.findByIdAndUpdate(
+      req.params.id,           //id
+      {title, description},   //update object
+      {new: true}             // return updated document
+    )
+    res.json({message: "Note updated successfully" ,data:updateNote})
+  } catch (err) {
+     res.status(500).json({message: "Error updating notes"})
   }
 })
 
 module.exports = router
+
+
+// Mongoose update methods return the old document by default. Setting { new: true } ensures the updated document is returned after the update.
