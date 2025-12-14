@@ -4,8 +4,23 @@ const connectDB = require("./config/database")
 const app = express()
 const cors = require("cors")
 
+// CORS Setup
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+    ],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    credentials: true,
+  })
+);
+
+// CORS Pre-flight
+// app.options("*", cors());
+
 // parsing
 app.use(express.json())
+
 
 
 // Import routers
