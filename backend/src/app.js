@@ -4,7 +4,15 @@ const connectDB = require("./config/database")
 const app = express()
 const cors = require("cors")
 
-// setup cors
+// parsing
+app.use(express.json())
+
+
+// Import routers
+const notesRouter = require("./routes/notes")
+
+// Use Routers
+app.use("/", notesRouter)
 
 connectDB()
   .then(() => {

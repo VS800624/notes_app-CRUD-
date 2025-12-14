@@ -6,10 +6,12 @@ const noteSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+      unique: true
     },
     description: {
       type: String,
       required: true,
+      unique: true
     },
   },
   { timestamp: true }
