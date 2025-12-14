@@ -35,4 +35,14 @@ router.post("/create", async(req,res) => {
   }
 })
 
+// Get all Notes
+router.get("/notes", async(req,res) => {
+  try {
+    const notes = await Note.find()
+    res.json({notes})
+  } catch (err){
+    res.status(500).json({message: "Error creating notes"})
+  }
+})
+
 module.exports = router
