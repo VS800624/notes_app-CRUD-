@@ -2,6 +2,7 @@ import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import { useEffect } from "react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Note = () => {
   const [notes, setNotes] = useState([]);
@@ -35,7 +36,7 @@ const Note = () => {
       <div className=" px-4">
         <div className="flex items-center justify-between mt-20 mb-10 max-w-4xl mx-auto">
           <h1 className=" text-3xl font-bold">Notes</h1>
-          <button className=" font-semibold  px-5 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">Create</button>
+          <button className=" font-semibold  px-5 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition"><Link to="/create">Create</Link></button>
         </div>
         {notes.map((note) => {
           const {title, description, _id} = note
