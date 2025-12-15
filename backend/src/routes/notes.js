@@ -51,7 +51,21 @@ router.get("/notes", async (req, res) => {
 }
 });
 
-// Update Notes
+// Get one note
+router.get("/notes/:id", async (req,res) => {
+  try{
+    const note = await Note.findById(req.params.id)
+
+    if(!note){
+      return res.status(404).json({message: "Note not found"})
+    }
+    res.json({message: "Note fetched successfully", data: note})
+  } catch(err){
+    res.status(500).json({message: "ERROR: "+ err.message});
+  }
+})
+
+// Edit Notes
 router.put("/notes/edit/:id", async (req, res) => {
   try {
     const { title, description } = req.body;

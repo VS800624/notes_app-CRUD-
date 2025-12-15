@@ -13,6 +13,7 @@ const CreateNote = () => {
   const handleCreate = async () => {
     if (!title || !description) {
       setError("All fields are required");
+      return
     }
     try {
       const res = await axios.post(
@@ -24,6 +25,7 @@ const CreateNote = () => {
         { withCredentials: true }
       );
       navigate("/")
+      setError("")
     } catch (err) {
       setError(err?.response?.data?.message || "Something went wrong");
       console.log(err);
