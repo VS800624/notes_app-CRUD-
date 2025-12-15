@@ -111,7 +111,7 @@ const EditNote = () => {
     </div>
       {showToast && (<div className="toast toast-top toast-center">
         <div className="alert alert-success">
-          <span>Profile saved successfully.</span>
+          <span>Note edited successfully.</span>
         </div>
       </div>)}
     </>

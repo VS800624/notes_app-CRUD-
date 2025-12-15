@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 
 const Note = () => {
   const [notes, setNotes] = useState([]);
+  const [showToast, setShowToast] = useState(false)
 
   const getNotes = async () => {
     try {
@@ -23,6 +24,21 @@ const Note = () => {
     getNotes();
   }, []);
 
+  const handleDelete = async(id) => {
+    try{
+      const res = await axios.delete(`${BASE_URL}/notes/delete/${id}`)
+      setNotes((prevNotes) => 
+      prevNotes.filter((note) => note._id !== id ))
+      setShowToast(true)
+      setTimeout(() => {
+        setShowToast(false)
+      }, 3000)
+    } catch(err){
+      console.error(err)
+      
+    }
+  }
+
   if (!notes || notes.length === 0) {
     return (
       <p className="flex justify-center my-10 text-xl font-semibold">
@@ -32,7 +48,8 @@ const Note = () => {
   }
 
   return (
-    notes && (
+    <>
+    {notes && (
       <div className=" px-4">
         <div className="flex items-center justify-between mt-20 mb-10 max-w-4xl mx-auto">
           <h1 className=" text-3xl font-bold">Notes</h1>
@@ -53,7 +70,7 @@ const Note = () => {
                 <button className="px-4 py-2 font-semibold bg-blue-500 text-white rounded hover:bg-blue-600">
                   <Link to={`/edit/${_id}`}>Update</Link>
                 </button>
-                <button className="px-4 py-2 font-semibold bg-red-500 text-white rounded hover:bg-red-600">
+                <button className="px-4 py-2 font-semibold bg-red-500 text-white rounded hover:bg-red-600" onClick={() => handleDelete(_id)}>
                   Delete
                 </button>
               </div>
@@ -61,7 +78,13 @@ const Note = () => {
           );
         })}
       </div>
-    )
+    )}
+     {showToast && (<div className="toast toast-top toast-center">
+        <div className="alert alert-error">
+          <span>Note deleted successfully</span>
+        </div>
+      </div>)}
+    </>
   );
 };
 
