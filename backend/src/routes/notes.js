@@ -52,7 +52,7 @@ router.get("/notes", async (req, res) => {
 });
 
 // Get one note
-router.get("/notes/:id", async (req,res) => {
+router.get("/note/:id", async (req,res) => {
   try{
     const note = await Note.findById(req.params.id)
 
