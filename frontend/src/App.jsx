@@ -1,9 +1,21 @@
+import {
+  BrowserRouter,
+  Route,
+  Routes,
+  createBrowserRouter,
+} from "react-router-dom";
+import Note from "./components/Note.jsx";
 
 function App() {
 
   return (
     <>
-    <h1 className="text-red-500"> Hello</h1>
+    <BrowserRouter basename="/">
+      <Routes>
+        <Route path="/" element={<Note/>}/>
+          <Route/>
+      </Routes>
+    </BrowserRouter>
     </>
   )
 }

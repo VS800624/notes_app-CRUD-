@@ -12,7 +12,7 @@ router.post("/notes/create", async (req, res) => {
       $or: [{ title }, { description }],
     });
 
-    if (existing) {
+    if (existingNote) {
       return res
         .status(400)
         .json({
