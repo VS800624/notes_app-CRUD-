@@ -1,6 +1,4 @@
-const { default: mongoose } = require("mongoose");
-const validator = require('validator')
-const jwt = require("jsonwebtoken");
+const mongoose  = require("mongoose");
 
 
 const noteSchema = new mongoose.Schema(
@@ -15,40 +13,12 @@ const noteSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true
-    },
-    firstName: {
-      type: String,
+    }, 
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
-      maxlength: 50,
-      minlength: 3,
     },
-    lastName: {
-      type: String,
-      maxlength: 50,
-      minlength: 3,
-    },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-      lowerCase: true,
-      trim: true,
-      validate(value){
-        if(!validator.isEmail(value)){
-          throw new Error("Invalid Email Address:" + value)
-        }
-      }
-    },
-    password: {
-    type: String,
-    required: true,
-    minlength: 6,
-     validate(value) {
-      if(!validator.isStrongPassword(value)){
-        throw new Error("Password must be strong (min 8 chars, uppercase, lowercase, number, special char)")
-      }
-    }
-  },
   },
   { timestamp: true }
 );
@@ -57,19 +27,6 @@ noteSchema.index({ userId: 1, createdAt: -1 });
 // Fetch notes user-wise
 // Show latest notes first
 // Much faster queries
-
-// Create login token:
-// Creates a JWT token for the user
-// Token contains: User _id
-// Token expires in 1 day
-// This token proves the user is logged in.
-userSchema.methods.getJWT = async function(){
-  const user= this
-  const token = await jwt.sign({_id: user._id}, process.env.JWT_SECRET,{
-    expiresIn: "1d"
-  });
-  return token
-}
 
 
 const Note = mongoose.model("Note", noteSchema);

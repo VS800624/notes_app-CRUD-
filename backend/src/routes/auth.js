@@ -9,6 +9,8 @@ authRouter.post("/signup", async(req,res) => {
   try {
     // validate the data
     validateSignUpData(req)
+
+    
   } catch (err){
     res.status(400).json({message: err.message})
   }
