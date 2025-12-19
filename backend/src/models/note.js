@@ -71,6 +71,7 @@ userSchema.methods.getJWT = async function(){
   return token
 }
 
+
 const Note = mongoose.model("Note", noteSchema);
 
 module.exports = Note;
