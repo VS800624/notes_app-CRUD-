@@ -3,6 +3,7 @@ const express = require("express")
 const connectDB = require("./config/database")
 const app = express()
 const cors = require("cors")
+const cookieParser = require("cookie-parser")
 
 // CORS Setup
 app.use(
@@ -20,14 +21,17 @@ app.use(
 
 // parsing
 app.use(express.json())
+app.use(cookieParser())
 
 
 
 // Import routers
 const notesRouter = require("./routes/notes")
+const authRouter = require("./routes/auth")
 
 // Use Routers
 app.use("/api", notesRouter)
+app.use("/api", authRouter)
 
 connectDB()
   .then(() => {

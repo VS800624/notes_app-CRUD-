@@ -10,16 +10,18 @@ authRouter.post("/signup", async(req,res) => {
     // validate the data
     validateSignUpData(req)
 
+    const {firstName, lastName, emailId, password} = req.body
+
     // Encrypt the password
     // Converts password into unreadable format
     // Protects user even if DB is hacked
     const passwordHash = await bcrypt.hash(password, 10)
 
-    // creating new instance for the note 
+    // Create new user instance
     const user = new User({
       firstName,
       lastName,
-      email,
+      emailId,
       password: passwordHash
     })
 
@@ -36,7 +38,7 @@ authRouter.post("/signup", async(req,res) => {
     // or
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "none",
       maxAge: 24 * 60 * 60 * 1000,  //1 day
     })   
@@ -44,9 +46,15 @@ authRouter.post("/signup", async(req,res) => {
 // secure → only HTTPS
 // sameSite: none → frontend & backend on different domains
 // maxAge → cookie expires in 1 day
-    res.json({message: "User added successfully", data: savedUser})
+
+    const userResponse = savedUser.toObject();
+    delete userResponse.password;
+    res.json({message: "User added successfully", data: userResponse})
     
   } catch (err){
     res.status(400).json({message: err.message})
   }
 })
+
+
+module.exports = authRouter

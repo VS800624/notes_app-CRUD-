@@ -14,11 +14,11 @@ const userSchema = new mongoose.Schema({
       maxlength: 50,
       minlength: 3,
     },
-    email: {
+    emailId: {
       type: String,
       required: true,
       unique: true,
-      lowerCase: true,
+      lowercase: true,
       trim: true,
       validate(value){
         if(!validator.isEmail(value)){
@@ -29,7 +29,6 @@ const userSchema = new mongoose.Schema({
     password: {
     type: String,
     required: true,
-    minlength: 6,
      validate(value) {
       if(!validator.isStrongPassword(value)){
         throw new Error("Password must be strong (min 8 chars, uppercase, lowercase, number, special char)")
