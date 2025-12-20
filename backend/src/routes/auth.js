@@ -57,4 +57,43 @@ authRouter.post("/signup", async(req,res) => {
 })
 
 
+authRouter.post("/login", async(req,res) => {
+  try {
+    const {emailId, password} = req.body
+
+    // validate email
+    if(!validator.isEmail(emailId)){
+    return res.status(400).json({message: "Invalid Credentials"})
+    }
+
+    // find user by email
+    const user = await User.findOne({emailId: emailId})
+    if(!user){
+      return res.status(400).json({message: "Invalid Credentials"}) 
+    }
+
+    // comparing password or validating it
+    const isPasswordValid = await user.validatePassword(password)
+    if(!isPasswordValid){
+      return res.status(400).json({message: ""})
+    }
+
+    // Create JWT token
+    const token = await user.getJWT()
+
+    // Set cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+      maxAge: 24 * 60 * 60 * 1000,  //1 day
+    })
+
+    res.json({message: "Logged in successfully!!!", user});
+    
+  } catch(err){
+    res.status({message: err.message})
+  }
+})
+
 module.exports = authRouter
