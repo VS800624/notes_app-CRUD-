@@ -32,3 +32,8 @@ noteSchema.index({ userId: 1, createdAt: -1 });
 const Note = mongoose.model("Note", noteSchema);
 
 module.exports = Note;
+
+
+// What ref: "User" actually means
+// It tells Mongoose:
+// “This ObjectId belongs to a document from the User collection.”
