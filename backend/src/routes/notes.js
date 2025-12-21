@@ -49,9 +49,9 @@ router.post("/notes/create", userAuth , async (req, res) => {
 });
 
 // Get all Notes
-router.get("/notes", async (req, res) => {
+router.get("/notes",userAuth,  async (req, res) => {
   try {
-    const notes = await Note.find();
+    const notes = await Note.find({userId: req.user._id});
     res.json({ message: "Fetched all the notes successfully", data: notes });
   } catch (err) {
   // console.error("ERROR:", err);
@@ -60,9 +60,12 @@ router.get("/notes", async (req, res) => {
 });
 
 // Get one note
-router.get("/note/:id", async (req,res) => {
+router.get("/note/:id",userAuth, async (req,res) => {
   try{
-    const note = await Note.findById(req.params.id)
+    const note = await Note.findById({
+      _id: req.params.id,
+      userId: req.user._id
+    })
 
     if(!note){
       return res.status(404).json({message: "Note not found"})
@@ -74,15 +77,23 @@ router.get("/note/:id", async (req,res) => {
 })
 
 // Edit Notes
-router.put("/notes/edit/:id", async (req, res) => {
+router.put("/notes/edit/:id", userAuth , async (req, res) => {
   try {
     const { title, description } = req.body;
     // findByIdAndUpdate takes  3 arguments: (id, updateObject, options)
     const updateNote = await Note.findByIdAndUpdate(
-      req.params.id, //id
+      {
+        _id: req.params.id,
+        userId: req.user._id
+      },
       { title, description }, //update object
       { new: true } // return updated document
     );
+
+    if(!updateNote) {
+      return res.status(404).json({message: "Note not found or not authorized"})
+    }
+
     res.json({ message: "Note updated successfully", data: updateNote });
   } catch (err) {
   // console.error("Update ERROR:", err);
@@ -93,9 +104,12 @@ router.put("/notes/edit/:id", async (req, res) => {
 module.exports = router;
 
 // Delete Notes
-router.delete("/notes/delete/:id", async (req, res) => {
+router.delete("/notes/delete/:id", userAuth, async (req, res) => {
   try {
-    const deletedNotes = await Note.findByIdAndDelete(req.params.id);
+    const deletedNotes = await Note.findOneAndDelete({
+      _id: req.params.id,
+      userId: req.user._id,
+    });
 
     if (!deletedNotes) {
       return res.status(404).json({ message: "Note not found" });
