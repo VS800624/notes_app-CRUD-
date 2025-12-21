@@ -1,14 +1,22 @@
 const express = require("express");
 const router = express.Router();
 const Note = require("../models/note");
+const { userAuth } = require("../middlewares/auth");
 
 // Create Note
-router.post("/notes/create", async (req, res) => {
+router.post("/notes/create", userAuth , async (req, res) => {
   try {
     const { title, description } = req.body;
+    const userId = req.user._id     //Extract user from middleware
 
-    // Check if note already  exists
+    // validation
+    if(!title || !description){
+      return res.json({message: "Title and description are required",})
+    }
+
+   // check if note already exists for this user
     const existingNote = await Note.findOne({
+      userId,         
       $or: [{ title }, { description }],
     });
 
