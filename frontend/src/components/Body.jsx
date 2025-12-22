@@ -1,9 +1,12 @@
 import React from 'react'
 import Navbar from './Navbar'
 import { Navigate, Outlet } from 'react-router-dom'
+import { useSelector } from "react-redux";
 
 const Body = () => {
-  const isLoggedIn = Boolean(localStorage.getItem("token"));
+  // (reduxState) => reduxState.user.isAuthenticated
+  const isLoggedIn = useSelector((state) => state.user.isAuthenticated);
+  //or const isLoggedIn = useSelector((store) => store.user.isAuthenticated)
 
   if(!isLoggedIn){
     return <Navigate to= "/login"/>

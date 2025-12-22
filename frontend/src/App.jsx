@@ -9,24 +9,28 @@ import CreateNote from "./components/CreateNote.jsx";
 import EditNote from "./components/EditNote.jsx";
 import Login from "./components/login.jsx";
 import Body from "./components/Body.jsx";
+import { Provider } from "react-redux";
+import appStore from "./utils/appStore.js";
 
 function App() {
 
   return (
     <>
-      <BrowserRouter basename="/">
-        <Routes>
-          {/*  Public Route (No Navbar) */}
-          <Route path="/login" element={<Login />} />
+    <Provider store={appStore}>
+        <BrowserRouter basename="/">
+          <Routes>
+            {/*  Public Route (No Navbar) */}
+            <Route path="/login" element={<Login />} />
 
-          {/*  Protected Routes (With Navbar) */}
-          <Route path="/" element={<Body />}>
-            <Route index element={<Note />} />
-            <Route path="create" element={<CreateNote />} />
-            <Route path="edit/:id" element={<EditNote />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+            {/*  Protected Routes (With Navbar) */}
+            <Route path="/" element={<Body />}>
+              <Route index element={<Note />} />
+              <Route path="create" element={<CreateNote />} />
+              <Route path="edit/:id" element={<EditNote />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+    </Provider>
     </>
   );
 }

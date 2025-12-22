@@ -1,8 +1,8 @@
-const { createSlice } = require("@reduxjs/toolkit");
+import { createSlice } from "@reduxjs/toolkit";
 
 
 const userSlice = createSlice({
-  name: user,
+  name: "user",
   initialState: {
     isAuthenticated: false,
     user: null,
