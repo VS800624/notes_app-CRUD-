@@ -2,3 +2,4 @@ node_modules
 .env
 auth_notes.md
 middleware_notes.md
+practice.js

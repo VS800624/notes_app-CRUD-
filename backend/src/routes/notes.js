@@ -39,6 +39,7 @@ router.post("/notes/create", userAuth , async (req, res) => {
     const note = new Note({
       title,
       description,
+      userId
     });
     const data = await note.save();
     res.json({ message: "Note created successfully", data });
