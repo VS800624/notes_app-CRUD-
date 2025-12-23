@@ -12,12 +12,11 @@ app.use(
       "http://localhost:5173",
     ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    credentials: true,
+    // credentials: true,
   })
 );
 
-// CORS Pre-flight
-// app.options("*", cors());
+
 
 // parsing
 app.use(express.json())

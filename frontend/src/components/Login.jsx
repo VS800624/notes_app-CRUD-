@@ -18,7 +18,6 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-    e.preventDefault();
     if (!emailId || !password) return setError("All fields are required");
     try {
       const res = await axios.post(
@@ -27,7 +26,7 @@ const Login = () => {
           emailId,
           password,
         },
-        { withCredentials: true }
+        // { withCredentials: true }
       );
       dispatch(
         loginSuccess({
@@ -35,13 +34,41 @@ const Login = () => {
           token: res.data.data.token,
         })
       );
+      setError("");
       navigate("/");
     } catch (err) {
+      console.log(err.response)
       setError(err?.response?.data?.message || "Something went wrong");
     }
   };
 
-  const handleSignup = async () => {};
+  const handleSignup = async (e) => {
+    if (!firstName || !lastName || !emailId || !password)
+      return setError("All fields are required");
+    try {
+      const res = await axios.post(
+        BASE_URL + "/signup",
+        {
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          emailId: emailId.trim(),
+          password,
+        },
+        // { withCredentials: true }
+      );
+      dispatch(
+        loginSuccess({
+          user: res.data.data.user,
+          token: res.data.data.token,
+        })
+      );
+      setError("");
+      navigate("/");
+    } catch (err) {
+      console.log(err.response)
+      setError(err?.response?.data?.message || "Something went wrong");
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-900 px-4">
@@ -51,7 +78,10 @@ const Login = () => {
         </h1>
         <form
           className="space-y-4 text-gray-900"
-          onSubmit={isLoginForm ? handleLogin : handleSignup}
+          onSubmit={(e) => {
+          e.preventDefault()
+          isLoginForm ? handleLogin() : handleSignup()
+        }}
         >
           {/* First Name */}
           {!isLoginForm && (
@@ -105,12 +135,15 @@ const Login = () => {
               Password
             </label>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="Enter password"
               value={password}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               onChange={(e) => setPassword(e.target.value)}
             />
+            <button type="button" className="text-sm text-blue-600 my-2" onClick={() => setShowPassword(!showPassword)}>
+                {showPassword ? "Hide Password" : "Show Password"}
+              </button>
           </div>
 
           <p className="text-red-500 my-[10px]">{error}</p>
