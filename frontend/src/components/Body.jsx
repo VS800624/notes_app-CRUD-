@@ -1,60 +1,64 @@
-import React, { useEffect, useState } from 'react'
-import Navbar from './Navbar'
-import { Navigate, Outlet } from 'react-router-dom'
+import React, { useEffect, useState } from "react";
+import Navbar from "./Navbar";
+import { Navigate, Outlet } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import axios from 'axios';
-import { BASE_URL } from '../utils/constants';
-import axiosInstance from '../utils/axiosInstance';
+import axios from "axios";
+import { BASE_URL } from "../utils/constants";
+import axiosInstance from "../utils/axiosInstance";
 import { loginSuccess } from "../utils/userSlice";
 
 const Body = () => {
   // (reduxState) => reduxState.user.isAuthenticated
   const isLoggedIn = useSelector((state) => state.user.isAuthenticated);
   //or const isLoggedIn = useSelector((store) => store.user.isAuthenticated)
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    setAuthChecked(true)
-    return
-  }
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setAuthChecked(true);
+      return;
+    }
 
-  axiosInstance.get("/notes")
-  .then((res) => {
-    dispatch(loginSuccess({
-      user: res.data.user,
-      token,
-    }));
-  })
-  .catch(() => {
-    localStorage.removeItem("token");
-  })
-   .finally(() => {
+    axiosInstance
+      .get("/notes")
+      .then((res) => {
+        dispatch(
+          loginSuccess({
+            user: res.data.user,
+            token,
+          })
+        );
+      })
+      .catch(() => {
+        localStorage.removeItem("token");
+      })
+      .finally(() => {
         setAuthChecked(true);
       });
-}, [dispatch]);
+  }, [dispatch]);
 
-
-  // ⏳ wait until auth check is complete
+  // wait until auth check is complete
   if (!authChecked) {
     return null; // or loader
   }
 
-  if(!isLoggedIn){
-    return <Navigate to= "/login"/>
+  if (!isLoggedIn) {
+    return <Navigate to="/login" />;
   }
-  
+
   return (
     <>
-      <Navbar/>
-      <Outlet/>
+      <Navbar />
+      <div className="pt-16">
+        <Outlet />
+      </div>
     </>
-  )
-}
+  );
+};
 
-export default Body
+export default Body;
 
 // Golden Rule (Memorize this)
 // If you are inside return or conditional rendering → use <Navigate />

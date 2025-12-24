@@ -4,23 +4,22 @@ import { useDispatch } from "react-redux";
 import { logout } from "../utils/userSlice";
 
 function Navbar({ isLoggedIn }) {
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const handleLogout = async() => {
+  const handleLogout = async () => {
     try {
-      await axiosInstance.post("/logout")
-      dispatch(logout())
-      navigate("/login")
-    } catch(err){
-      console.error(err)
+      await axiosInstance.post("/logout");
+      dispatch(logout());
+      navigate("/login");
+    } catch (err) {
+      console.error(err);
     }
-  }
-  
+  };
+
   return (
-    <nav className="w-full bg-white border-b shadow-sm fixed top-0 left-0 z-50">
+    <nav className="w-full bg-white border-b shadow-sm fixed top-0 left-0 z-50 mb-30">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-        
         {/* Logo */}
         <Link to="/" className="text-2xl font-bold text-blue-600">
           NotesApp
@@ -32,7 +31,7 @@ function Navbar({ isLoggedIn }) {
             <>
               <NavLink
                 to="/create"
-                className="hover:text-blue-600 transition"
+                className="font-semibold px-5 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition"
               >
                 Create
               </NavLink>
@@ -46,10 +45,7 @@ function Navbar({ isLoggedIn }) {
             </>
           ) : (
             <>
-              <NavLink
-                to="/notes"
-                className="hover:text-blue-600 transition"
-              >
+              <NavLink to="/notes" className="hover:text-blue-600 transition">
                 My Notes
               </NavLink>
 

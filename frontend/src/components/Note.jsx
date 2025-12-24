@@ -11,10 +11,11 @@ const Note = () => {
   const [notes, setNotes] = useState([]);
   const [showToast, setShowToast] = useState(false);
   const isLoggedIn = useSelector((state) => state.user.isAuthenticated);
+  const [loading, setLoading] = useState(true);
 
   const getNotes = async () => {
     try {
-      const res = await axiosInstance.get( "/notes", {
+      const res = await axiosInstance.get("/notes", {
         // headers: {
         //   Authorization: `Bearer ${token}`,
         // },
@@ -28,8 +29,8 @@ const Note = () => {
   };
 
   useEffect(() => {
-     if (!isLoggedIn) return;
-    getNotes();
+    if (!isLoggedIn) return;
+    getNotes().finally(() => setLoading(false));
   }, [isLoggedIn]);
 
   const handleDelete = async (id) => {
@@ -47,56 +48,47 @@ const Note = () => {
     }
   };
 
-  if (!notes || notes.length === 0) {
-    return (
-      <p className="flex justify-center my-10 text-xl font-semibold">
-        No notes found!
-      </p>
-    );
-  }
-
   return (
     <>
-      {notes && (
-        <div className=" px-4">
-          <div className="flex items-center justify-between mt-20 mb-10 max-w-4xl mx-auto">
-            <h1 className=" text-3xl font-bold">Notes</h1>
-            <button className=" font-semibold  px-5 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-              <Link to="/create">Create</Link>
-            </button>
-          </div>
-          {notes.map((note) => {
-            const { title, description, _id } = note;
-            return (
-              <div
-                key={_id}
-                className="flex  items-start my-10 gap-4 max-w-4xl mx-auto"
-              >
-                {/* Note Card */}
-                <div className="border p-4 rounded-md flex-1 text-left">
-                  <h2 className="font-semibold text-lg">{title}</h2>
-                  <p className="text-gray-600 mt-1">{description}</p>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex flex-col gap-2">
-                  <button className="px-4 py-2 font-semibold bg-blue-500 text-white rounded hover:bg-blue-600">
-                    <Link to={`/edit/${_id}`}>Update</Link>
-                  </button>
-                  <button
-                    className="px-4 py-2 font-semibold bg-red-500 text-white rounded hover:bg-red-600"
-                    onClick={() => handleDelete(_id)}
-                  >
-                    Delete
-                  </button>
-                </div>
+      <div className="px-4 my-10">
+        {loading ? (
+          <p className="text-center my-10">Loading...</p>
+        ) : notes.length === 0 ? (
+          <p className="flex justify-center   text-xl font-semibold">
+            No notes found!
+          </p>
+        ) : (
+          notes.map(({ title, description, _id }) => (
+            <div
+              key={_id}
+              className="flex items-start my-10 gap-4 max-w-4xl mx-auto"
+            >
+              <div className="border p-4 rounded-md flex-1">
+                <h2 className="font-semibold text-lg">{title}</h2>
+                <p className="text-gray-600 mt-1">{description}</p>
               </div>
-            );
-          })}
-        </div>
-      )}
+
+              <div className="flex flex-col gap-2">
+                <Link
+                  to={`/edit/${_id}`}
+                  className="px-4 py-2 font-semibold bg-blue-500 text-white rounded hover:bg-blue-600 text-center"
+                >
+                  Update
+                </Link>
+                <button
+                  className="px-4 py-2 font-semibold bg-red-500 text-white rounded hover:bg-red-600"
+                  onClick={() => handleDelete(_id)}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
       {showToast && (
-        <div className="toast toast-top toast-center">
+        <div className="toast toast-top toast-center my-10  z-50">
           <div className="alert alert-error">
             <span>Note deleted successfully</span>
           </div>

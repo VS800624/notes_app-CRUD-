@@ -3,6 +3,8 @@ import { useState } from "react";
 import { BASE_URL } from "../utils/constants";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import axiosInstance from "../utils/axiosInstance";
+import { ArrowBigLeft } from 'lucide-react';
 
 const CreateNote = () => {
   const [title, setTitle] = useState("");
@@ -33,9 +35,15 @@ const CreateNote = () => {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-start">
-      <div className="w-full max-w-xl bg-white mt-20 p-6 rounded-xl shadow-md text-gray-800">
-        <h1 className="text-center text-2xl font-bold mb-6 ">
+    <div className="min-h-screen  items-start ">
+      <button
+        className="bg-blue-600 mt-10 ml-10 text-white font-semibold py-2 px-6 rounded-lg hover:bg-blue-800 transition"
+        onClick={() => navigate(-1)}
+      >
+        <ArrowBigLeft/>
+      </button>
+      <div className="max-w-xl mx-auto mt-10 bg-white text-black p-6 rounded-xl shadow-md">
+        <h1 className="text-center text-2xl  font-bold mb-6 ">
           Create Note
         </h1>
 

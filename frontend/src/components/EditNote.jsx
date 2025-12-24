@@ -48,6 +48,7 @@ const EditNote = () => {
       setShowToast(true)
       setTimeout(() => {
         setShowToast(false)
+        navigate("/");
       },3000)
     } catch (err) {
       setError(err?.response?.data?.message || "Something went wrong");
@@ -57,7 +58,7 @@ const EditNote = () => {
 
   return (
     <>
-    <div className="min-h-screen flex justify-center items-start  mt-10">
+    <div className="min-h-screen flex justify-center items-start mt-10">
       <button
         className="bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-blue-800 transition"
         onClick={() => navigate(-1)}
@@ -110,7 +111,7 @@ const EditNote = () => {
         </button>
       </div>
     </div>
-      {showToast && (<div className="toast toast-top toast-center">
+      {showToast && (<div className="toast toast-top toast-center z-50">
         <div className="alert alert-success">
           <span>Note edited successfully.</span>
         </div>
