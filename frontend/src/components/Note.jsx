@@ -4,15 +4,17 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
+import { loginSuccess } from "../utils/userSlice";
+import { useSelector } from "react-redux";
 
 const Note = () => {
   const [notes, setNotes] = useState([]);
   const [showToast, setShowToast] = useState(false);
+  const isLoggedIn = useSelector((state) => state.user.isAuthenticated);
 
   const getNotes = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axiosInstance.get(BASE_URL + "/notes", {
+      const res = await axiosInstance.get( "/notes", {
         // headers: {
         //   Authorization: `Bearer ${token}`,
         // },
@@ -26,19 +28,15 @@ const Note = () => {
   };
 
   useEffect(() => {
+     if (!isLoggedIn) return;
     getNotes();
-  }, []);
+  }, [isLoggedIn]);
 
   const handleDelete = async (id) => {
     try {
       // const token = localStorage.getItem("token");
 
-      const res = await axiosInstance.delete(`${BASE_URL}/notes/delete/${id}`,
-         {
-        // headers: {
-        //   Authorization: `Bearer ${token}`,
-        // },
-      });
+      const res = await axiosInstance.delete(`/notes/delete/${id}`);
       setNotes((prevNotes) => prevNotes.filter((note) => note._id !== id));
       setShowToast(true);
       setTimeout(() => {

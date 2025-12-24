@@ -34,6 +34,8 @@ const Login = () => {
           token: res.data.data.token,
         })
       );
+      console.log("LOGIN RESPONSE:", res.data);
+      localStorage.setItem("token", res.data.data.token);
       setError("");
       navigate("/");
     } catch (err) {
@@ -62,6 +64,7 @@ const Login = () => {
           token: res.data.data.token,
         })
       );
+      localStorage.setItem("token", res.data.data.token);
       setError("");
       navigate("/");
     } catch (err) {

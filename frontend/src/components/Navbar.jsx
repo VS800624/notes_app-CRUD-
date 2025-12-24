@@ -11,21 +11,21 @@ function Navbar({ isLoggedIn }) {
         </Link>
 
         {/* Right Menu */}
-        <ul className="flex items-center gap-6 text-gray-700 font-medium">
+        <ul className="flex items-center gap-6 text-blue-700 font-medium">
           {!isLoggedIn ? (
             <>
               <NavLink
-                to="/login"
+                to="/create"
                 className="hover:text-blue-600 transition"
               >
-                Login
+                Create
               </NavLink>
 
               <NavLink
                 to="/signup"
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition"
               >
-                Signup
+                Logout
               </NavLink>
             </>
           ) : (

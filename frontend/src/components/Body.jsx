@@ -1,24 +1,27 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar'
 import { Navigate, Outlet } from 'react-router-dom'
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from 'axios';
 import { BASE_URL } from '../utils/constants';
+import axiosInstance from '../utils/axiosInstance';
+import { loginSuccess } from "../utils/userSlice";
 
 const Body = () => {
   // (reduxState) => reduxState.user.isAuthenticated
   const isLoggedIn = useSelector((state) => state.user.isAuthenticated);
   //or const isLoggedIn = useSelector((store) => store.user.isAuthenticated)
+  const dispatch = useDispatch()
+  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
   const token = localStorage.getItem("token");
-  if (!token) return;
+  if (!token) {
+    setAuthChecked(true)
+    return
+  }
 
-  axios.get(BASE_URL + "/", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
+  axiosInstance.get("/notes")
   .then((res) => {
     dispatch(loginSuccess({
       user: res.data.user,
@@ -27,9 +30,17 @@ const Body = () => {
   })
   .catch(() => {
     localStorage.removeItem("token");
-  });
-}, []);
+  })
+   .finally(() => {
+        setAuthChecked(true);
+      });
+}, [dispatch]);
 
+
+  // ⏳ wait until auth check is complete
+  if (!authChecked) {
+    return null; // or loader
+  }
 
   if(!isLoggedIn){
     return <Navigate to= "/login"/>
