@@ -1,6 +1,22 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import axiosInstance from "../utils/axiosInstance";
+import { useDispatch } from "react-redux";
+import { logout } from "../utils/userSlice";
 
 function Navbar({ isLoggedIn }) {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  const handleLogout = async() => {
+    try {
+      await axiosInstance.post("/logout")
+      dispatch(logout())
+      navigate("/login")
+    } catch(err){
+      console.error(err)
+    }
+  }
+  
   return (
     <nav className="w-full bg-white border-b shadow-sm fixed top-0 left-0 z-50">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
@@ -21,12 +37,12 @@ function Navbar({ isLoggedIn }) {
                 Create
               </NavLink>
 
-              <NavLink
-                to="/signup"
+              <button
                 className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition"
+                onClick={handleLogout}
               >
                 Logout
-              </NavLink>
+              </button>
             </>
           ) : (
             <>
