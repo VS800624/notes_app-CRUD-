@@ -16,13 +16,13 @@ const CreateNote = () => {
       return
     }
     try {
-      const res = await axios.post(
+      const res = await axiosInstance.post(
         BASE_URL + "/notes/create",
         {
           title,
           description,
         },
-        { withCredentials: true }
+        // { withCredentials: true }
       );
       navigate("/")
       setError("")

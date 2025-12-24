@@ -4,6 +4,7 @@ import { BASE_URL } from "../utils/constants";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { useEffect } from "react";
+import axiosInstance from "../utils/axiosInstance";
 
 const EditNote = () => {
   const [title, setTitle] = useState("");
@@ -16,8 +17,8 @@ const EditNote = () => {
   useEffect(() => {
     const fetchNote = async () => {
       try{
-        const res = await axios.get(`${BASE_URL}/note/${id}`, 
-        {withCredentials: true}
+        const res = await axiosInstance.get(`${BASE_URL}/note/${id}`, 
+        // {withCredentials: true}
       )
       setTitle(res.data.data.title)
       setDescription(res.data.data.description)
@@ -34,13 +35,13 @@ const EditNote = () => {
       return
     }
     try {
-      const res = await axios.put(
+      const res = await axiosInstance.put(
         BASE_URL + "/notes/edit/" +id,
         {
           title,
           description,
         },
-        { withCredentials: true }
+        // { withCredentials: true }
       );
       
       setError("")
