@@ -2,16 +2,20 @@ import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import { useEffect } from "react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
 import { loginSuccess } from "../utils/userSlice";
 import { useSelector } from "react-redux";
 
 const Note = () => {
   const [notes, setNotes] = useState([]);
-  const [showToast, setShowToast] = useState(false);
+  const [showDeleteToast, setDeleteShowToast] = useState(false);
   const isLoggedIn = useSelector((state) => state.user.isAuthenticated);
   const [loading, setLoading] = useState(true);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   const getNotes = async () => {
     try {
@@ -31,6 +35,22 @@ const Note = () => {
   useEffect(() => {
     if (!isLoggedIn) return;
     getNotes().finally(() => setLoading(false));
+
+    if (location.state?.toast) {
+      setToastMessage(location.state.toast);
+      setShowToast(true);
+    }
+
+    // clear state so back button won't trigger toast
+    //  replace: true rewrites history and clears state, so back navigation doesn’t re-trigger logic.
+    //We cleared route state by replacing the current history entry using navigate(path, { replace: true }), so the toast-triggering state doesn’t persist
+    navigate(location.pathname, { replace: true });
+
+    const timer = setTimeout(() => {
+      setShowToast(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
   }, [isLoggedIn]);
 
   const handleDelete = async (id) => {
@@ -39,7 +59,7 @@ const Note = () => {
 
       const res = await axiosInstance.delete(`/notes/delete/${id}`);
       setNotes((prevNotes) => prevNotes.filter((note) => note._id !== id));
-      setShowToast(true);
+      setDeleteShowToast(true);
       setTimeout(() => {
         setShowToast(false);
       }, 3000);
@@ -87,10 +107,18 @@ const Note = () => {
         )}
       </div>
 
-      {showToast && (
+      {showDeleteToast && (
         <div className="toast toast-top toast-center my-10  z-50">
           <div className="alert alert-error">
             <span>Note deleted successfully</span>
+          </div>
+        </div>
+      )}
+
+      {showToast && (
+        <div className="toast toast-top toast-center z-50">
+          <div className="alert alert-success">
+            <span>{toastMessage}</span>
           </div>
         </div>
       )}

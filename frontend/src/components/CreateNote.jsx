@@ -4,30 +4,38 @@ import { BASE_URL } from "../utils/constants";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import axiosInstance from "../utils/axiosInstance";
-import { ArrowBigLeft } from 'lucide-react';
+import { ArrowBigLeft } from "lucide-react";
 
 const CreateNote = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleCreate = async () => {
     if (!title || !description) {
       setError("All fields are required");
-      return
+      return;
     }
+
+    if (title[0] !== title[0].toUpperCase()) {
+      setError("The first letter should be capital");
+      return;
+    }
+
     try {
       const res = await axiosInstance.post(
         BASE_URL + "/notes/create",
         {
           title,
           description,
-        },
+        }
         // { withCredentials: true }
       );
-      navigate("/")
-      setError("")
+      navigate("/", {
+        state: { toast: "Note created successfully" },
+      });
+      setError("");
     } catch (err) {
       setError(err?.response?.data?.message || "Something went wrong");
       console.log(err);
@@ -35,17 +43,15 @@ const CreateNote = () => {
   };
 
   return (
-    <div className="min-h-screen  items-start ">
+    <div className="min-h-screen   ">
       <button
-        className="bg-blue-600 mt-10 ml-10 text-white font-semibold py-2 px-6 rounded-lg hover:bg-blue-800 transition"
+        className="bg-blue-600 mt-10 ml-20 text-white font-semibold py-2 px-6 rounded-lg hover:bg-blue-800 transition"
         onClick={() => navigate(-1)}
       >
-        <ArrowBigLeft/>
+        <ArrowBigLeft />
       </button>
       <div className="max-w-xl mx-auto mt-10 bg-white text-black p-6 rounded-xl shadow-md">
-        <h1 className="text-center text-2xl  font-bold mb-6 ">
-          Create Note
-        </h1>
+        <h1 className="text-center text-2xl  font-bold mb-6 ">Create Note</h1>
 
         {/* Title */}
         <div className="mb-4 ">
