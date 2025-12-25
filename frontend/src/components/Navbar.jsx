@@ -45,7 +45,7 @@ function Navbar({ isLoggedIn }) {
             </>
           ) : (
             <>
-              <NavLink to="/notes" className="hover:text-blue-600 transition">
+              <NavLink to="/" className="hover:text-blue-600 transition">
                 My Notes
               </NavLink>
 
