@@ -91,12 +91,12 @@ const Note = () => {
               <div className="flex flex-col gap-2">
                 <Link
                   to={`/edit/${_id}`}
-                  className="px-4 py-2 font-semibold bg-blue-500 text-white rounded hover:bg-blue-600 text-center"
+                  className="px-4 py-2 font-semibold text-white text-center rounded bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg"
                 >
                   Update
                 </Link>
                 <button
-                  className="px-4 py-2 font-semibold bg-red-500 text-white rounded hover:bg-red-600"
+                  className="px-4 py-2 font-semibold text-white rounded bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 transition-all duration-300 shadow-md hover:shadow-lg"
                   onClick={() => handleDelete(_id)}
                 >
                   Delete

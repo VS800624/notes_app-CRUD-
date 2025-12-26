@@ -39,15 +39,16 @@ const Premium = () => {
           </ul>
 
           <button
-            className="w-full mt-10 py-2 rounded-full bg-gray-900 text-white font-semibold hover:bg-gray-700 transition"
+            className="w-full mt-10 py-2 rounded-full text-white font-semibold bg-gradient-to-r from-slate-600 to-gray-800
+             hover:from-slate-700 hover:to-gray-900 transition-all duration-300 shadow-md hover:shadow-lg"
           >
-            Current Plan
+            Choose Silver
           </button>
         </div>
 
         {/* Gold Plan */}
         <div className="bg-white rounded-2xl shadow-xl p-8 w-full md:w-[300px] border-2 border-yellow-500 relative hover:-translate-y-1 transition">
-          <span className="absolute -top-3 right-4 bg-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+          <span className="absolute -top-3 right-4 text-white text-xs font-bold px-3 py-1 rounded-full bg-gradient-to-r from-yellow-400 via-yellow-500 to-amber-500 shadow-md">
             Recommended
           </span>
 
@@ -73,9 +74,9 @@ const Premium = () => {
           </ul>
 
           <button
-            className="w-full py-2 rounded-full bg-blue-600 text-white font-semibold hover:bg-blue-500 transition"
+            className="w-full py-2 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700  transition text-white font-semibold "
           >
-            Upgrade Now
+            Choose Gold
           </button>
         </div>
       </div>

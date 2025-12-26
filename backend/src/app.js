@@ -27,11 +27,14 @@ app.use(cookieParser())
 
 // Import routers
 const notesRouter = require("./routes/notes")
-const authRouter = require("./routes/auth")
+const authRouter = require("./routes/auth");
+const paymentRouter = require("./routes/payment");
+
 
 // Use Routers
 app.use("/api", notesRouter)
 app.use("/api", authRouter)
+app.use("/api", paymentRouter)
 
 connectDB()
   .then(() => {
