@@ -12,6 +12,7 @@ import Body from "./components/Body.jsx";
 import { Provider } from "react-redux";
 import appStore from "./utils/appStore.js";
 import NotFound from "./components/NotFound.jsx";
+import Premium from "./components/Premium.jsx";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
               <Route index element={<Note />} />
               <Route path="/create" element={<CreateNote />} />
               <Route path="/edit/:id" element={<EditNote />} />
+              <Route path="/premium" element={<Premium />} />
             </Route>
 
             {/* Unknown URL */}
