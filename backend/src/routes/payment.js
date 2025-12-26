@@ -8,7 +8,7 @@ const { userAuth } = require("../middlewares/auth");
 paymentRouter.post("/payment/create", userAuth, async (req, res) => {
   try {
     const { membershipType } = req.body;
-    const { firtName, lastName, emailId } = req.user;
+    const { firstName, lastName, emailId } = req.user;
 
     // this is the code to create order on razorPay , we have initialized our razorpay instance with key
     const order = await razorPayInstance.orders.create({
