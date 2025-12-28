@@ -21,7 +21,7 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
         firstName,
         lastName,
         emailId,
-        memberShip: membershipType,
+        membershipType: membershipType,
       },
     }); //this will return a promise and we will create an order
 
@@ -74,7 +74,7 @@ paymentRouter.post("/payment/webhook", async(req,res) => {
     await user.save()
 
     // return success response to razorpay 
-    res.status(200).json({message: "Webhook received sucessfully"})
+    res.status(200).json({message: "Webhook received successfully"})
 
     
   } catch(err){
@@ -83,7 +83,7 @@ paymentRouter.post("/payment/webhook", async(req,res) => {
 })
 
 paymentRouter.post("/payment/verify", userAuth, async (req,res) => {
-  const user =  req.user
+  const user =  req.user.toJSON()
   if(user.isPremium){
     return res.json({isPremium: true})
   }
