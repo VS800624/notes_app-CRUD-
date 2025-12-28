@@ -1,23 +1,37 @@
-import React from 'react'
-import axiosInstance from '../utils/axiosInstance';
+import React, { useEffect, useState } from "react";
+import axiosInstance from "../utils/axiosInstance";
 
 const Premium = () => {
+  const [isUserPremium, setIsUserPremium] = useState(false);
 
-  const handleBuyClick = async(type) => {
-    const order = await axiosInstance.post( "/payment/create", {
+  useEffect(() => {
+    verifyPremiumUser();
+  }, []);
+
+  const verifyPremiumUser = async () => {
+    const res = axiosInstance.get("/premium/verify");
+    if (res.data.isPremium) {
+      setIsUserPremium(true);
+    }
+  };
+
+  const handleBuyClick = async (type) => {
+    const order = await axiosInstance.post("/payment/create", {
       membershipType: type,
-    },)
+    });
 
     // It should open the razorpay dialog box
-    const {amount, keyId, currency, notes, orderId} = order.data
+    const { amount, keyId, currency, notes, orderId } = order.data;
     const options = {
       key: keyId, // Razorpay Key ID (TEST or LIVE)
-      amount, 
+      amount,
       currency,
-      name: "Notes App", 
+      name: "Notes App",
       description: "Connect to other developers",
       order_id: orderId,
       image: "https://play.google.com/store/apps/details?id=com.task.notes",
+
+      handler: verifyPremiumUser,
 
       prefill: {
         name: notes.firstName + " " + notes.lastName,
@@ -35,17 +49,29 @@ const Premium = () => {
     };
 
     //This line will oen up the razorpay dialog box , this is very important
-    const rzp = new window.Razorpay(options)
-    rzp.open()
-  }
-  
-  return (
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  };
+
+  return isUserPremium ? (
+    <div className="max-w-md mx-auto mt-10 rounded-2xl border border-yellow-300 bg-yellow-50 p-6 text-center shadow-sm">
+      <div className="flex justify-center mb-4">
+        <div className="h-12 w-12 flex items-center justify-center rounded-full bg-yellow-400 text-white text-xl font-bold">
+          ★
+        </div>
+      </div>
+
+      <h2 className="text-xl font-semibold text-gray-800">Premium Active</h2>
+
+      <p className="mt-2 text-gray-600">
+        You are already a premium user. Enjoy all exclusive features.
+      </p>
+    </div>
+  ) : (
     <div className="min-h-screen bg-gray-100 px-4 py-12">
       {/* Header */}
       <div className="text-center mb-12">
-        <h1 className="text-3xl font-bold text-gray-900">
-          Upgrade to Premium
-        </h1>
+        <h1 className="text-3xl font-bold text-gray-900">Upgrade to Premium</h1>
         <p className="text-gray-600 mt-2 text-sm">
           Unlock powerful features to manage your notes better
         </p>
@@ -53,7 +79,6 @@ const Premium = () => {
 
       {/* Plans */}
       <div className="flex flex-col md:flex-row justify-center gap-8 max-w-5xl mx-auto">
-        
         {/* Silver Plan */}
         <div className="bg-white rounded-2xl shadow-lg p-8 w-full md:w-[300px] hover:-translate-y-1 transition">
           <h2 className="text-xl font-semibold text-gray-800 mb-2">
@@ -79,7 +104,8 @@ const Premium = () => {
           <button
             className="w-full mt-10 py-2 rounded-full text-white font-semibold bg-gradient-to-r from-slate-600 to-gray-800
              hover:from-slate-700 hover:to-gray-900 transition-all duration-300 shadow-md hover:shadow-lg"
-          onClick={() => handleBuyClick("silver")}>
+            onClick={() => handleBuyClick("silver")}
+          >
             Choose Silver
           </button>
         </div>
@@ -123,4 +149,4 @@ const Premium = () => {
   );
 };
 
-export default Premium
+export default Premium;
