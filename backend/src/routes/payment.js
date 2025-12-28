@@ -65,6 +65,15 @@ paymentRouter.post("/payment/webhook", async(req,res) => {
     const  paymentDetails = req.body.payload.payment.entity
     
     const payment = await Payment.findOne({orderId: paymentDetails.order_id})
+
+     if (!payment) {
+      return res.status(404).json({ message: "Payment not found" });
+      }
+
+     if (payment.status === "captured") {
+      return res.status(200).json({ message: "Already processed" });
+    }
+    
     payment.status = paymentDetails.status
     await payment.save()
 
@@ -82,7 +91,7 @@ paymentRouter.post("/payment/webhook", async(req,res) => {
   }
 })
 
-paymentRouter.post("/payment/verify", userAuth, async (req,res) => {
+paymentRouter.get("/payment/verify", userAuth, async (req,res) => {
   const user =  req.user.toJSON()
   if(user.isPremium){
     return res.json({isPremium: true})
