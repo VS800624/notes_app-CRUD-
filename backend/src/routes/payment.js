@@ -71,6 +71,7 @@ paymentRouter.post("/payment/webhook", async(req,res) => {
     const user = await User.findOne({_id: payment.userId})
     user.isPremium = true
     user.membershipType = payment.notes.membershipType
+    await user.save()
 
     // return success response to razorpay 
     res.status(200).json({message: "Webhook received sucessfully"})
