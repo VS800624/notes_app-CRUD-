@@ -70,17 +70,32 @@ paymentRouter.post("/payment/webhook", async(req,res) => {
       return res.status(404).json({ message: "Payment not found" });
       }
 
+      const event = req.body.event;
+
+    // Handle FAILED payment
+    if (event === "payment.failed") {
+      payment.status = "failed";
+      await payment.save();
+
+      return res.status(200).json({ message: "Payment failed recorded" });
+    }
+
+       // Prevent duplicate webhook process
      if (payment.status === "captured") {
       return res.status(200).json({ message: "Already processed" });
     }
-    
+     // Update payment
     payment.status = paymentDetails.status
     await payment.save()
 
-    const user = await User.findOne({_id: payment.userId})
-    user.isPremium = true
-    user.membershipType = payment.notes.membershipType
-    await user.save()
+    // Upgrade user
+    if (paymentDetails.status === "captured") {
+      const user = await User.findById(payment.userId);
+
+      user.isPremium = true;
+      user.membershipType = payment.notes.membershipType;
+      await user.save();
+    }
 
     // return success response to razorpay 
     res.status(200).json({message: "Webhook received successfully"})
@@ -92,7 +107,7 @@ paymentRouter.post("/payment/webhook", async(req,res) => {
 })
 
 paymentRouter.get("/payment/verify", userAuth, async (req,res) => {
-  const user =  req.user.toJSON()
+  const user =  req.user
   if(user.isPremium){
     return res.json({isPremium: true})
   }

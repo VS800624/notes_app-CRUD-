@@ -18,7 +18,11 @@ app.use(
   })
 );
 
-
+//  Razorpay webhook — RAW BODY (must be first)
+app.use(
+  "/api/payment/webhook",
+  express.raw({ type: "application/json" })
+);
 
 // parsing
 app.use(express.json())
