@@ -53,8 +53,8 @@ paymentRouter.post("/payment/webhook", async(req,res) => {
     // It will validate whether my webhook is correct or not 
     // Verify signature with RAW body
     const isWebhookValid = validateWebhookSignature(
-      JSON.stringify(req.body),
-      // req.body,
+      // JSON.stringify(req.body),
+      req.body,
       webhookSignature,
       process.env.RAZORPAY_WEBHOOK_SECRET
     )
@@ -64,13 +64,14 @@ paymentRouter.post("/payment/webhook", async(req,res) => {
     }
 
     //  NOW parse the body
-      // const body = JSON.parse(req.body.toString());
+      const body = JSON.parse(req.body.toString());
     // Use parsed body safely
-      //  const event = body.event;
-      const event = req.body.event
+       const event = body.event;
+      // const event = req.body.event
 
     // Update my payment status in DB
-    const  paymentDetails = req.body.payload.payment.entity
+    // const  paymentDetails = req.body.payload.payment.entity
+    const  paymentDetails = body.payload.payment.entity
     
     
     const payment = await Payment.findOne({orderId: paymentDetails.order_id})
@@ -96,7 +97,7 @@ paymentRouter.post("/payment/webhook", async(req,res) => {
     await payment.save()
 
     // Upgrade user
-
+    if (paymentDetails.status === "captured") {
       const user = await User.findById(payment.userId);
       
        if (!user) {
@@ -106,7 +107,7 @@ paymentRouter.post("/payment/webhook", async(req,res) => {
       user.isPremium = true;
       user.membershipType = payment.notes.membershipType;
       await user.save();
-
+    }
 
     // return success response to razorpay 
     res.status(200).json({message: "Webhook received successfully"})
