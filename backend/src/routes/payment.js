@@ -52,7 +52,8 @@ paymentRouter.post("/payment/webhook", async(req,res) => {
 
     // It will validate whether my webhook is correct or not 
     const isWebhookValid = validateWebhookSignature(
-      JSON.stringify(req.body),
+      // JSON.stringify(req.body),
+      req.body,
       webhookSignature,
       process.env.RAZORPAY_WEBHOOK_SECRET
     )
@@ -91,7 +92,11 @@ paymentRouter.post("/payment/webhook", async(req,res) => {
     // Upgrade user
     if (paymentDetails.status === "captured") {
       const user = await User.findById(payment.userId);
-
+      
+       if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
       user.isPremium = true;
       user.membershipType = payment.notes.membershipType;
       await user.save();
