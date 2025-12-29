@@ -51,6 +51,7 @@ paymentRouter.post("/payment/webhook", async(req,res) => {
     // or const webhookSignature = req.get("X-Razorpay-Signature")
 
     // It will validate whether my webhook is correct or not 
+    // Verify signature with RAW body
     const isWebhookValid = validateWebhookSignature(
       // JSON.stringify(req.body),
       req.body,
@@ -62,16 +63,20 @@ paymentRouter.post("/payment/webhook", async(req,res) => {
       return res.status(400).json({message:"Webhook signature is invalid"})
     }
 
+    //  NOW parse the body
+      const body = JSON.parse(req.body.toString());
+    // Use parsed body safely
+       const event = body.event;
+
     // Update my payment status in DB
     const  paymentDetails = req.body.payload.payment.entity
+    
     
     const payment = await Payment.findOne({orderId: paymentDetails.order_id})
 
      if (!payment) {
       return res.status(404).json({ message: "Payment not found" });
       }
-
-      const event = req.body.event;
 
     // Handle FAILED payment
     if (event === "payment.failed") {
