@@ -9,7 +9,7 @@ const Premium = () => {
   }, []);
 
   const verifyPremiumUser = async () => {
-    const res = axiosInstance.get("/premium/verify");
+    const res = await axiosInstance.get("/premium/verify");
     console.log("Premium verify response:", res.data);
     
     if (res.data.isPremium) {

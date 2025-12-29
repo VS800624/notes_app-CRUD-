@@ -45,7 +45,8 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
   }
 });
 
-paymentRouter.post("/payment/webhook", async(req,res) => {
+// Razorpay webhook — RAW BODY (must be first)
+paymentRouter.post("/payment/webhook",express.raw({ type: "application/json" }), async(req,res) => {
   try{
     const webhookSignature = req.header("X-Razorpay-Signature")
     // or const webhookSignature = req.get("X-Razorpay-Signature")
