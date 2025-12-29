@@ -53,8 +53,8 @@ paymentRouter.post("/payment/webhook", async(req,res) => {
     // It will validate whether my webhook is correct or not 
     // Verify signature with RAW body
     const isWebhookValid = validateWebhookSignature(
-      // JSON.stringify(req.body),
-      req.body,
+      JSON.stringify(req.body),
+      // req.body,
       webhookSignature,
       process.env.RAZORPAY_WEBHOOK_SECRET
     )
@@ -64,9 +64,10 @@ paymentRouter.post("/payment/webhook", async(req,res) => {
     }
 
     //  NOW parse the body
-      const body = JSON.parse(req.body.toString());
+      // const body = JSON.parse(req.body.toString());
     // Use parsed body safely
-       const event = body.event;
+      //  const event = body.event;
+      const event = req.body.event
 
     // Update my payment status in DB
     const  paymentDetails = req.body.payload.payment.entity
