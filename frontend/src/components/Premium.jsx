@@ -10,6 +10,7 @@ const Premium = () => {
 
   const verifyPremiumUser = async () => {
     const res = axiosInstance.get("/premium/verify");
+    
     if (res.data.isPremium) {
       setIsUserPremium(true);
     }

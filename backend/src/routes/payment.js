@@ -99,14 +99,12 @@ paymentRouter.post("/payment/webhook", async(req,res) => {
 
     // return success response to razorpay 
     res.status(200).json({message: "Webhook received successfully"})
-
-    
   } catch(err){
     res.status(500).json({ success: false, message: err.message });
   }
 })
 
-paymentRouter.get("/payment/verify", userAuth, async (req,res) => {
+paymentRouter.get("/premium/verify", userAuth, async (req,res) => {
   const user =  req.user
   if(user.isPremium){
     return res.json({isPremium: true})
