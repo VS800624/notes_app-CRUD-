@@ -46,16 +46,18 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
 });
 
 // Razorpay webhook — RAW BODY (must be first)
-paymentRouter.post("/payment/webhook",express.raw({ type: "application/json" }), async(req,res) => {
+// paymentRouter.post("/payment/webhook",express.raw({ type: "application/json" }), async(req,res) => {
+  paymentRouter.post("/payment/webhook",  async (req, res) => {
   try{
+    console.log("🔥 WEBHOOK HIT");
     const webhookSignature = req.header("X-Razorpay-Signature")
     // or const webhookSignature = req.get("X-Razorpay-Signature")
 
     // It will validate whether my webhook is correct or not 
     // Verify signature with RAW body
     const isWebhookValid = validateWebhookSignature(
-      // JSON.stringify(req.body),
-      req.body,
+      JSON.stringify(req.body),
+      // req.body,
       webhookSignature,
       process.env.RAZORPAY_WEBHOOK_SECRET
     )
@@ -65,10 +67,10 @@ paymentRouter.post("/payment/webhook",express.raw({ type: "application/json" }),
     }
 
     //  NOW parse the body
-      const body = JSON.parse(req.body.toString());
+      // const body = JSON.parse(req.body.toString());
     // Use parsed body safely
-       const event = body.event;
-      // const event = req.body.event
+      //  const event = body.event;
+      const event = req.body.event
 
     // Update my payment status in DB
     // const  paymentDetails = req.body.payload.payment.entity
@@ -93,22 +95,20 @@ paymentRouter.post("/payment/webhook",express.raw({ type: "application/json" }),
      if (payment.status === "captured") {
       return res.status(200).json({ message: "Already processed" });
     }
-     // Update payment
-    payment.status = paymentDetails.status
-    await payment.save()
+     
+   if (event === "payment.captured") {
+      // Update payment
+        payment.status = "captured";
+        await payment.save();
 
-    // Upgrade user
-    if (paymentDetails.status === "captured") {
-      const user = await User.findById(payment.userId);
-      
-       if (!user) {
-        return res.status(404).json({ message: "User not found" });
+      // Upgrade user
+        const user = await User.findById(payment.userId);
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        user.isPremium = true;
+        user.membershipType = payment.notes.membershipType;
+        await user.save();
       }
-      
-      user.isPremium = true;
-      user.membershipType = payment.notes.membershipType;
-      await user.save();
-    }
 
     // return success response to razorpay 
     res.status(200).json({message: "Webhook received successfully"})
