@@ -68,7 +68,7 @@ authRouter.post("/signup", async (req, res) => {
     if (err.code === 11000) {
     return res.status(400).json({ message: "Email already exists" });
   }
-    res.status(400).json({ message: err.message });
+    res.status(500).json({ message: err.message });
   }
 });
 
@@ -90,7 +90,7 @@ authRouter.post("/login", async (req, res) => {
     // comparing password or validating it
     const isPasswordValid = await user.validatePassword(password);
     if (!isPasswordValid) {
-      return res.status(400).json({ message: "" });
+      return res.status(400).json({ message: "Invalid credentials" });
     }
 
     // Create JWT token
@@ -108,7 +108,7 @@ authRouter.post("/login", async (req, res) => {
 
     res.json({ message: "Logged in successfully!!!", data: { user, token } });
   } catch (err) {
-    res.status({ message: err.message });
+    res.status(400).json({ message: "ERROR: " + err.message })
   }
 });
 
