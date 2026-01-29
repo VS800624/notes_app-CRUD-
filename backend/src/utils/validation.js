@@ -8,6 +8,10 @@ const validateSignUpData = (req) => {
     throw new Error("All fields are required");
   }
 
+   if(typeof firstName !== "string" || typeof lastName !== "string"){
+    throw new Error ("Name should be string")
+  }
+
   if (typeof emailId !== "string") {
     throw new Error("Email must be a string");
   }

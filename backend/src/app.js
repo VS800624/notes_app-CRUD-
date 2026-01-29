@@ -24,8 +24,8 @@ app.use(
 //   express.raw({ type: "application/json" })
 // );
 
-// parsing
-app.use(express.json())
+  // parsing
+  app.use(express.json())
 app.use(cookieParser())
 
 
@@ -51,3 +51,5 @@ connectDB()
   .catch((err) => {
     console.error("Database cannot be connected" + err.message)
   })
+
+  // app.use(express.json()) is a middleware that parses incoming JSON request bodies so the backend can access data using req.body.
