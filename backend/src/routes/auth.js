@@ -82,7 +82,7 @@ authRouter.post("/login", async (req, res) => {
     }
 
     // find user by email
-    const user = await User.findOne({ emailId: emailId });
+    const user = await User.findOne({ emailId: emailId }).select("+password");
     if (!user) {
       return res.status(400).json({ message: "Invalid Credentials" });
     }
