@@ -191,16 +191,29 @@ router.get("/pin", userAuth, async (req, res) => {
       isArchived: false,
     }).sort({ isPinned: -1, createdAt: -1 });
 
-    if (notes.length === 0) {
-      return res.status(200).json({ message: "No pinned notes found", notes: [] });
-    }
 
     res.json({ message: "Fetched pinned notes successfully", notes });
-    
+
   } catch (err) {
     res.status(500).json({ message: "ERROR: " + err.message });
   }
 });
+
+// fetch archived notes
+router.get("/archive", userAuth, async(req,res) => {
+  try{
+
+    const  notes = await Note.find({
+      userId: req.user._id,
+      isArchived: true
+    }).sort({ createdAt: -1 });
+
+    res.json({message: "Fetched archived notes successfully", notes})
+    
+  }catch(err){
+    res.status(500).json({message: "ERROR: " + err.message})
+  }
+})
 
 module.exports = router;
 
