@@ -102,7 +102,7 @@ router.put("/notes/edit/:id", userAuth , async (req, res) => {
 }
 });
 
-module.exports = router;
+
 
 // Delete Notes
 router.delete("/notes/delete/:id", userAuth, async (req, res) => {
@@ -122,5 +122,30 @@ router.delete("/notes/delete/:id", userAuth, async (req, res) => {
   res.status(500).json({message: "ERROR: "+ err.message});
 }
 });
+
+// Pin notes
+router.put("/pin/:id", userAuth, async(req,res) => {
+  try{
+
+    const note = await Note.findOne({
+      _id: req.params.id,
+      userId: req.user.id
+    })
+
+    if(!note){
+      return res.status(404).json({message: "Note not found"})
+    }
+
+    note.isPinned = !note.isPinned
+    await note.save()
+
+    res.json({message: note.isPinned ? "Note pinned" : "Note unpinned", note})
+
+  }catch(err){
+    res.status(500).json({message: "ERROR: " + err.message })
+  }
+})
+
+module.exports = router;
 
 // Mongoose update methods return the old document by default. Setting { new: true } ensures the updated document is returned after the update.
