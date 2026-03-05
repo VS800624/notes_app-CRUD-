@@ -7,21 +7,23 @@ const noteSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      unique: true
     },
     description: {
       type: String,
       required: true,
-      unique: true
     }, 
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
     },
   },
-  { timestamp: true }
+  { timestamps: true }
 );
+
+
+// compound unique index
+noteSchema.index({ title: 1, description: 1, userId: 1 }, { unique: true });
+// This ensures that the combination of these three fields must be unique.
 
 noteSchema.index({ userId: 1, createdAt: -1 });
 // Fetch notes user-wise
