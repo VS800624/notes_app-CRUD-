@@ -1,5 +1,4 @@
-const mongoose  = require("mongoose");
-
+const mongoose = require("mongoose");
 
 const noteSchema = new mongoose.Schema(
   {
@@ -11,15 +10,24 @@ const noteSchema = new mongoose.Schema(
     description: {
       type: String,
       required: true,
-    }, 
+    },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      required: true,
+    },
+    isPinned: {
+      type: Boolean,
+      default: false,
+    },
+
+    isArchived: {
+      type: Boolean,
+      default: false,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
-
 
 // compound unique index
 noteSchema.index({ title: 1, description: 1, userId: 1 }, { unique: true });
@@ -30,11 +38,9 @@ noteSchema.index({ userId: 1, createdAt: -1 });
 // Show latest notes first
 // Much faster queries
 
-
 const Note = mongoose.model("Note", noteSchema);
 
 module.exports = Note;
-
 
 // What ref: "User" actually means
 // It tells Mongoose:
