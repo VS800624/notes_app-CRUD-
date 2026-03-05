@@ -101,10 +101,11 @@ const Premium = () => {
             <li>✔ Basic text editor</li>
             <li>✔ Manual delete & edit</li>
             <li>✔ Secure login</li>
+            <li>✔ Archive Notes</li>
           </ul>
 
           <button
-            className="w-full mt-10 py-2 rounded-full text-white font-semibold bg-gradient-to-r from-slate-600 to-gray-800
+            className="w-full py-2 rounded-full text-white font-semibold bg-gradient-to-r from-slate-600 to-gray-800
              hover:from-slate-700 hover:to-gray-900 transition-all duration-300 shadow-md hover:shadow-lg"
             onClick={() => handleBuyClick("silver")}
           >

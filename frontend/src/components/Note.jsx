@@ -16,6 +16,7 @@ const Note = () => {
   const navigate = useNavigate();
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [view, setView] = useState("active");
 
   const getNotes = async () => {
     try {
@@ -68,28 +69,25 @@ const Note = () => {
     }
   };
 
-  const handlePin = async (id) => {
+  const updateNote = async (id, action) => {
     try {
-      const res = await axiosInstance.put(`/notes/pin/${id}`);
+      const res = await axiosInstance.put(`/notes/${action}/${id}`);
       const updatedNote = res.data.note;
       setNotes((prevNotes) =>
-        prevNotes.map((note) => (note._id === id ? updatedNote : note)),
+        prevNotes.map((note) => (note._id === updatedNote._id ? updatedNote : note)),
       );
     } catch (err) {
       console.error(err);
     }
   };
 
-  const handleArchive = async (id) => {
-    try {
-      
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  
 
   return (
     <>
+
+
+    
       <div className="px-4 my-10">
         {loading ? (
           <p className="text-center my-10">Loading...</p>
@@ -100,7 +98,7 @@ const Note = () => {
         ) : (
           <div className="max-w-7xl mx-auto px-6 py-10">
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {notes.map(({ title, description, _id, isPinned }) => (
+              {notes.filter(note => !note.isArchived).map(({ title, description, _id, isPinned }) => (
                 <div
                   key={_id}
                   className="bg-gradient-to-br from-slate-800 to-slate-900 
@@ -140,14 +138,14 @@ const Note = () => {
                     </button>
 
                     <button
-                      onClick={() => handlePin(_id)}
+                      onClick={() => updateNote(_id,"pin")}
                       className="px-3 py-1 text-sm rounded-md bg-slate-700 hover:bg-slate-600 text-white transition"
                     >
                       📌
                     </button>
 
                     <button
-                      onClick={() => handleArchive(_id)}
+                      onClick={() => updateNote(_id,"archive")}
                       className="px-3 py-1 text-sm rounded-md bg-slate-700 hover:bg-slate-600 text-white transition"
                     >
                       📦
