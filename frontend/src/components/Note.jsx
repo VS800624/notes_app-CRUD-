@@ -74,20 +74,42 @@ const Note = () => {
       const res = await axiosInstance.put(`/notes/${action}/${id}`);
       const updatedNote = res.data.note;
       setNotes((prevNotes) =>
-        prevNotes.map((note) => (note._id === updatedNote._id ? updatedNote : note)),
+        prevNotes.map((note) =>
+          note._id === updatedNote._id ? updatedNote : note,
+        ),
       );
     } catch (err) {
       console.error(err);
     }
   };
 
-  
+  const filteredNotes =
+    view === "active"
+      ? notes.filter((note) => !note.isArchived)
+      : notes.filter((note) => note.isArchived);
 
   return (
     <>
+      <div className="my-10 flex bg-slate-800 rounded-lg p-1 w-fit mx-auto">
+        <button
+          onClick={() => setView("active")}
+          className={`px-4 py-2 rounded-md ${
+            view === "active" && "bg-blue-600 text-white"
+          }`}
+        >
+          Notes
+        </button>
 
+        <button
+          onClick={() => setView("archived")}
+          className={`px-4 py-2 rounded-md ${
+            view === "archived" && "bg-blue-600 text-white"
+          }`}
+        >
+          Archived
+        </button>
+      </div>
 
-    
       <div className="px-4 my-10">
         {loading ? (
           <p className="text-center my-10">Loading...</p>
@@ -96,9 +118,9 @@ const Note = () => {
             No notes found!
           </p>
         ) : (
-          <div className="max-w-7xl mx-auto px-6 py-10">
+          <div className="max-w-7xl mx-auto px-6 py-8">
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {notes.filter(note => !note.isArchived).map(({ title, description, _id, isPinned }) => (
+              {filteredNotes.map(({ title, description, _id, isPinned }) => (
                 <div
                   key={_id}
                   className="bg-gradient-to-br from-slate-800 to-slate-900 
@@ -138,14 +160,14 @@ const Note = () => {
                     </button>
 
                     <button
-                      onClick={() => updateNote(_id,"pin")}
+                      onClick={() => updateNote(_id, "pin")}
                       className="px-3 py-1 text-sm rounded-md bg-slate-700 hover:bg-slate-600 text-white transition"
                     >
                       📌
                     </button>
 
                     <button
-                      onClick={() => updateNote(_id,"archive")}
+                      onClick={() => updateNote(_id, "archive")}
                       className="px-3 py-1 text-sm rounded-md bg-slate-700 hover:bg-slate-600 text-white transition"
                     >
                       📦
