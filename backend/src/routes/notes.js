@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Note = require("../models/note");
 const { userAuth } = require("../middlewares/auth");
+const { default: mongoose } = require("mongoose");
 
 // Create Note
 router.post("/notes/create", userAuth , async (req, res) => {
@@ -80,6 +81,11 @@ router.get("/note/:id",userAuth, async (req,res) => {
 // Edit Notes
 router.put("/notes/edit/:id", userAuth , async (req, res) => {
   try {
+
+    if(!mongoose.Types.ObjectId.isValid(req.params.id)){
+      return res.status(400).json({message: "Invalid Id"})
+    }
+    
     const { title, description } = req.body;
     // findByIdAndUpdate takes  3 arguments: (id, updateObject, options)
     const updateNote = await Note.findByIdAndUpdate(
@@ -107,6 +113,11 @@ router.put("/notes/edit/:id", userAuth , async (req, res) => {
 // Delete Notes
 router.delete("/notes/delete/:id", userAuth, async (req, res) => {
   try {
+
+    if(!mongoose.Types.ObjectId.isValid(req.params.id)){
+      return res.status(400).json({message: "Invalid Id"})
+    }
+    
     const deletedNotes = await Note.findOneAndDelete({
       _id: req.params.id,
       userId: req.user._id,
@@ -127,6 +138,10 @@ router.delete("/notes/delete/:id", userAuth, async (req, res) => {
 router.put("/pin/:id", userAuth, async(req,res) => {
   try{
 
+    if(!mongoose.Types.ObjectId.isValid(req.params.id)){
+      return res.status(400).json({message: "Invalid Id"})
+    }
+    
     const note = await Note.findOne({
       _id: req.params.id,
       userId: req.user.id
@@ -143,6 +158,33 @@ router.put("/pin/:id", userAuth, async(req,res) => {
 
   }catch(err){
     res.status(500).json({message: "ERROR: " + err.message })
+  }
+})
+
+// Archive note
+router.put("/archive/:id", userAuth, async(req,res) => {
+  try{
+
+    if(!mongoose.Types.ObjectId.isValid(req.params.id)){
+      return res.status(400).json({message: "Invalid Id"})
+    }
+
+    const note = await  Note.findOne({
+      _id: req.params.id,
+      userId: req.user.id
+    })
+
+    if(!note){
+      return res.status(404).json({message: "Note not found"})
+    }
+
+    note.isArchived = !note.isArchived
+    note.save()
+
+    res.json({message: note.isArchived ? "Note archived" : "Note restored"})
+    
+  }catch(err){
+    res.status(500).json({message: "ERROR: " + err.message})
   }
 })
 
