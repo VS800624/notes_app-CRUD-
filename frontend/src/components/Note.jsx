@@ -57,7 +57,7 @@ const Note = () => {
     try {
       // const token = localStorage.getItem("token");
 
-      const res = await axiosInstance.delete(`/notes/delete/${id}`);
+      const res = await axiosInstance.delete(`/notes/${id}`);
       setNotes((prevNotes) => prevNotes.filter((note) => note._id !== id));
       setDeleteShowToast(true);
       setTimeout(() => {
@@ -67,6 +67,20 @@ const Note = () => {
       console.error(err);
     }
   };
+
+  const handlePin = async(id) => {
+    try{
+      const res  = await axiosInstance.put(`/notes/pin/${id}`)
+      const updatedNote = res.data.note
+      setNotes(prevNotes => prevNotes.map(note => (
+        note._id === id ? updatedNote : note
+      )))
+    }catch(err){
+      console.error(err)
+    }
+  }
+
+ 
 
   return (
     <>
@@ -101,6 +115,9 @@ const Note = () => {
                 >
                   Delete
                 </button>
+                <button onClick={() => handlePin(_id)}>{notes.isPinned ? "📌 Unpin" : "📍 Pin"}</button>
+
+                <button onClick={() => handleArchive(_id)}>📦</button>
               </div>
             </div>
           ))
