@@ -75,7 +75,7 @@ router.get("/note/:id", userAuth, async (req, res) => {
     if (!note) {
       return res.status(404).json({ message: "Note not found" });
     }
-    res.json({ message: "Note fetched successfully", data: note });
+    res.json({ message: "Note fetched successfully",  note });
   } catch (err) {
     res.status(500).json({ message: "ERROR: " + err.message });
   }
@@ -136,7 +136,7 @@ router.delete("/notes/:id", userAuth, async (req, res) => {
 });
 
 // Pin notes
-router.put("notes/pin/:id", userAuth, async (req, res) => {
+router.put("/notes/pin/:id", userAuth, async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ message: "Invalid Id" });
@@ -164,7 +164,7 @@ router.put("notes/pin/:id", userAuth, async (req, res) => {
 });
 
 // Archive note
-router.put("notes/archive/:id", userAuth, async (req, res) => {
+router.put("/notes/archive/:id", userAuth, async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ message: "Invalid Id" });
@@ -189,7 +189,7 @@ router.put("notes/archive/:id", userAuth, async (req, res) => {
 });
 
 // fetch pinned notes
-router.get("notes/pin", userAuth, async (req, res) => {
+router.get("/notes/pin", userAuth, async (req, res) => {
   try {
     const notes = await Note.find({
       userId: req.user_.id,
@@ -205,7 +205,7 @@ router.get("notes/pin", userAuth, async (req, res) => {
 });
 
 // fetch archived notes
-router.get("notes/archive", userAuth, async(req,res) => {
+router.get("/notes/archive", userAuth, async(req,res) => {
   try{
 
     const  notes = await Note.find({
