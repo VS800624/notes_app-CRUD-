@@ -68,19 +68,25 @@ const Note = () => {
     }
   };
 
-  const handlePin = async(id) => {
-    try{
-      const res  = await axiosInstance.put(`/notes/pin/${id}`)
-      const updatedNote = res.data.note
-      setNotes(prevNotes => prevNotes.map(note => (
-        note._id === id ? updatedNote : note
-      )))
-    }catch(err){
-      console.error(err)
+  const handlePin = async (id) => {
+    try {
+      const res = await axiosInstance.put(`/notes/pin/${id}`);
+      const updatedNote = res.data.note;
+      setNotes((prevNotes) =>
+        prevNotes.map((note) => (note._id === id ? updatedNote : note)),
+      );
+    } catch (err) {
+      console.error(err);
     }
-  }
+  };
 
- 
+  const handleArchive = async (id) => {
+    try {
+      
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <>
@@ -92,35 +98,65 @@ const Note = () => {
             No notes found!
           </p>
         ) : (
-          notes.map(({ title, description, _id }) => (
-            <div
-              key={_id}
-              className="flex items-start my-10 gap-4 max-w-4xl mx-auto"
-            >
-              <div className="border p-4 rounded-md flex-1">
-                <h2 className="font-semibold text-lg">{title}</h2>
-                <p className="text-gray-600 mt-1">{description}</p>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <Link
-                  to={`/edit/${_id}`}
-                  className="px-4 py-2 font-semibold text-white text-center rounded bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg"
+          <div className="max-w-7xl mx-auto px-6 py-10">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {notes.map(({ title, description, _id, isPinned }) => (
+                <div
+                  key={_id}
+                  className="bg-gradient-to-br from-slate-800 to-slate-900 
+                    border border-slate-700 rounded-xl p-5 shadow-lg hover:shadow-xl hover:-translate-y-1 transition duration-300 flex flex-col justify-between"
                 >
-                  Update
-                </Link>
-                <button
-                  className="px-4 py-2 font-semibold text-white rounded bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 transition-all duration-300 shadow-md hover:shadow-lg"
-                  onClick={() => handleDelete(_id)}
-                >
-                  Delete
-                </button>
-                <button onClick={() => handlePin(_id)}>{notes.isPinned ? "📌 Unpin" : "📍 Pin"}</button>
+                  {/* NOTE CONTENT */}
+                  <Link to={`/note/${_id}`}>
+                    <div>
+                      <div className="flex justify-between items-start">
+                        <h2 className="text-lg font-semibold text-white">
+                          {title}
+                        </h2>
 
-                <button onClick={() => handleArchive(_id)}>📦</button>
-              </div>
+                        {isPinned && <span>📌</span>}
+                      </div>
+
+                      <p className="text-slate-400 mt-2 text-sm break-words line-clamp-3">
+                        {description}
+                      </p>
+                    </div>
+                  </Link>
+
+                  {/* ACTION BUTTONS */}
+                  <div className="flex gap-2 mt-6 flex-wrap">
+                    <Link
+                      to={`/edit/${_id}`}
+                      className="px-3 py-1 text-sm rounded-md bg-blue-500 hover:bg-blue-600 text-white transition"
+                    >
+                      Edit
+                    </Link>
+
+                    <button
+                      onClick={() => handleDelete(_id)}
+                      className="px-3 py-1 text-sm rounded-md bg-red-500 hover:bg-red-600 text-white transition"
+                    >
+                      Delete
+                    </button>
+
+                    <button
+                      onClick={() => handlePin(_id)}
+                      className="px-3 py-1 text-sm rounded-md bg-slate-700 hover:bg-slate-600 text-white transition"
+                    >
+                      📌
+                    </button>
+
+                    <button
+                      onClick={() => handleArchive(_id)}
+                      className="px-3 py-1 text-sm rounded-md bg-slate-700 hover:bg-slate-600 text-white transition"
+                    >
+                      📦
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))
+          </div>
         )}
       </div>
 

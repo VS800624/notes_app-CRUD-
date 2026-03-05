@@ -62,7 +62,12 @@ router.get("/notes", userAuth, async (req, res) => {
 // Get one note
 router.get("/note/:id", userAuth, async (req, res) => {
   try {
-    const note = await Note.findById({
+
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: "Invalid Id" });
+    }
+    
+    const note = await Note.findOne({
       _id: req.params.id,
       userId: req.user._id,
     });
@@ -108,7 +113,7 @@ router.put("/notes/edit/:id", userAuth, async (req, res) => {
 });
 
 // Delete Notes
-router.delete("/notes/delete/:id", userAuth, async (req, res) => {
+router.delete("/notes/:id", userAuth, async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ message: "Invalid Id" });
@@ -131,7 +136,7 @@ router.delete("/notes/delete/:id", userAuth, async (req, res) => {
 });
 
 // Pin notes
-router.put("/pin/:id", userAuth, async (req, res) => {
+router.put("notes/pin/:id", userAuth, async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ message: "Invalid Id" });
@@ -159,7 +164,7 @@ router.put("/pin/:id", userAuth, async (req, res) => {
 });
 
 // Archive note
-router.put("/archive/:id", userAuth, async (req, res) => {
+router.put("notes/archive/:id", userAuth, async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ message: "Invalid Id" });
@@ -177,14 +182,14 @@ router.put("/archive/:id", userAuth, async (req, res) => {
     note.isArchived = !note.isArchived;
     note.save();
 
-    res.json({ message: note.isArchived ? "Note archived" : "Note restored" });
+    res.json({ message: note.isArchived ? "Note archived" : "Note restored" , note });
   } catch (err) {
     res.status(500).json({ message: "ERROR: " + err.message });
   }
 });
 
 // fetch pinned notes
-router.get("/pin", userAuth, async (req, res) => {
+router.get("notes/pin", userAuth, async (req, res) => {
   try {
     const notes = await Note.find({
       userId: req.user_.id,
@@ -200,7 +205,7 @@ router.get("/pin", userAuth, async (req, res) => {
 });
 
 // fetch archived notes
-router.get("/archive", userAuth, async(req,res) => {
+router.get("notes/archive", userAuth, async(req,res) => {
   try{
 
     const  notes = await Note.find({

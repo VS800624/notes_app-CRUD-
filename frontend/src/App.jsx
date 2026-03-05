@@ -13,6 +13,7 @@ import { Provider } from "react-redux";
 import appStore from "./utils/appStore.js";
 import NotFound from "./components/NotFound.jsx";
 import Premium from "./components/Premium.jsx";
+import SingleNote from "./components/SingleNote.jsx";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
             {/*  Protected Routes (With Navbar) */}
             <Route path="/" element={<Body />}>
               <Route index element={<Note />} />
+              <Route path="/note/:id" element={<SingleNote/>}/>
               <Route path="/create" element={<CreateNote />} />
               <Route path="/edit/:id" element={<EditNote />} />
               <Route path="/premium" element={<Premium />} />
