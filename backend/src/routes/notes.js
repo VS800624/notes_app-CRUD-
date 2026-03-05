@@ -5,28 +5,26 @@ const { userAuth } = require("../middlewares/auth");
 const { default: mongoose } = require("mongoose");
 
 // Create Note
-router.post("/notes/create", userAuth , async (req, res) => {
+router.post("/notes/create", userAuth, async (req, res) => {
   try {
     const { title, description } = req.body;
-    const userId = req.user._id     //Extract user from middleware
+    const userId = req.user._id; //Extract user from middleware
 
     // validation
-    if(!title || !description){
-      return res.json({message: "Title and description are required",})
+    if (!title || !description) {
+      return res.json({ message: "Title and description are required" });
     }
 
-   // check if note already exists for this user
+    // check if note already exists for this user
     const existingNote = await Note.findOne({
-      userId,         
+      userId,
       $or: [{ title }, { description }],
     });
 
     if (existingNote) {
-      return res
-        .status(400)
-        .json({
-          message: "Note with same title or description already exists",
-        });
+      return res.status(400).json({
+        message: "Note with same title or description already exists",
+      });
     }
 
     // Create and save note
@@ -40,84 +38,82 @@ router.post("/notes/create", userAuth , async (req, res) => {
     const note = new Note({
       title,
       description,
-      userId
+      userId,
     });
     const data = await note.save();
     res.json({ message: "Note created successfully", data });
   } catch (err) {
-  // console.error("ERROR:", err);
-  res.status(500).json({message: "ERROR: "+ err.message});
-}
+    // console.error("ERROR:", err);
+    res.status(500).json({ message: "ERROR: " + err.message });
+  }
 });
 
 // Get all Notes
-router.get("/notes",userAuth,  async (req, res) => {
+router.get("/notes", userAuth, async (req, res) => {
   try {
-    const notes = await Note.find({userId: req.user._id});
+    const notes = await Note.find({ userId: req.user._id });
     res.json({ message: "Fetched all the notes successfully", data: notes });
   } catch (err) {
-  // console.error("ERROR:", err);
-  res.status(500).json({message: "ERROR: "+ err.message});
-}
+    // console.error("ERROR:", err);
+    res.status(500).json({ message: "ERROR: " + err.message });
+  }
 });
 
 // Get one note
-router.get("/note/:id",userAuth, async (req,res) => {
-  try{
+router.get("/note/:id", userAuth, async (req, res) => {
+  try {
     const note = await Note.findById({
       _id: req.params.id,
-      userId: req.user._id
-    })
+      userId: req.user._id,
+    });
 
-    if(!note){
-      return res.status(404).json({message: "Note not found"})
+    if (!note) {
+      return res.status(404).json({ message: "Note not found" });
     }
-    res.json({message: "Note fetched successfully", data: note})
-  } catch(err){
-    res.status(500).json({message: "ERROR: "+ err.message});
+    res.json({ message: "Note fetched successfully", data: note });
+  } catch (err) {
+    res.status(500).json({ message: "ERROR: " + err.message });
   }
-})
+});
 
 // Edit Notes
-router.put("/notes/edit/:id", userAuth , async (req, res) => {
+router.put("/notes/edit/:id", userAuth, async (req, res) => {
   try {
-
-    if(!mongoose.Types.ObjectId.isValid(req.params.id)){
-      return res.status(400).json({message: "Invalid Id"})
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: "Invalid Id" });
     }
-    
+
     const { title, description } = req.body;
     // findByIdAndUpdate takes  3 arguments: (id, updateObject, options)
     const updateNote = await Note.findByIdAndUpdate(
       {
         _id: req.params.id,
-        userId: req.user._id
+        userId: req.user._id,
       },
       { title, description }, //update object
-      { new: true } // return updated document
+      { new: true }, // return updated document
     );
 
-    if(!updateNote) {
-      return res.status(404).json({message: "Note not found or not authorized"})
+    if (!updateNote) {
+      return res
+        .status(404)
+        .json({ message: "Note not found or not authorized" });
     }
 
     res.json({ message: "Note updated successfully", data: updateNote });
   } catch (err) {
-  // console.error("Update ERROR:", err);
-  res.status(500).json({message: "ERROR: "+ err.message});
-}
+    // console.error("Update ERROR:", err);
+    res.status(500).json({ message: "ERROR: " + err.message });
+  }
 });
-
-
 
 // Delete Notes
 router.delete("/notes/delete/:id", userAuth, async (req, res) => {
   try {
-
-    if(!mongoose.Types.ObjectId.isValid(req.params.id)){
-      return res.status(400).json({message: "Invalid Id"})
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: "Invalid Id" });
     }
-    
+
     const deletedNotes = await Note.findOneAndDelete({
       _id: req.params.id,
       userId: req.user._id,
@@ -129,64 +125,82 @@ router.delete("/notes/delete/:id", userAuth, async (req, res) => {
 
     res.json({ message: "Deleted note successfully" });
   } catch (err) {
-  // console.error("DELETE ERROR:", err);
-  res.status(500).json({message: "ERROR: "+ err.message});
-}
+    // console.error("DELETE ERROR:", err);
+    res.status(500).json({ message: "ERROR: " + err.message });
+  }
 });
 
 // Pin notes
-router.put("/pin/:id", userAuth, async(req,res) => {
-  try{
-
-    if(!mongoose.Types.ObjectId.isValid(req.params.id)){
-      return res.status(400).json({message: "Invalid Id"})
+router.put("/pin/:id", userAuth, async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: "Invalid Id" });
     }
-    
+
     const note = await Note.findOne({
       _id: req.params.id,
-      userId: req.user.id
-    })
+      userId: req.user_.id,
+    });
 
-    if(!note){
-      return res.status(404).json({message: "Note not found"})
+    if (!note) {
+      return res.status(404).json({ message: "Note not found" });
     }
 
-    note.isPinned = !note.isPinned
-    await note.save()
+    note.isPinned = !note.isPinned;
+    await note.save();
 
-    res.json({message: note.isPinned ? "Note pinned" : "Note unpinned", note})
-
-  }catch(err){
-    res.status(500).json({message: "ERROR: " + err.message })
+    res.json({
+      message: note.isPinned ? "Note pinned" : "Note unpinned",
+      note,
+    });
+  } catch (err) {
+    res.status(500).json({ message: "ERROR: " + err.message });
   }
-})
+});
 
 // Archive note
-router.put("/archive/:id", userAuth, async(req,res) => {
-  try{
-
-    if(!mongoose.Types.ObjectId.isValid(req.params.id)){
-      return res.status(400).json({message: "Invalid Id"})
+router.put("/archive/:id", userAuth, async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: "Invalid Id" });
     }
 
-    const note = await  Note.findOne({
+    const note = await Note.findOne({
       _id: req.params.id,
-      userId: req.user.id
-    })
+      userId: req.user_.id,
+    });
 
-    if(!note){
-      return res.status(404).json({message: "Note not found"})
+    if (!note) {
+      return res.status(404).json({ message: "Note not found" });
     }
 
-    note.isArchived = !note.isArchived
-    note.save()
+    note.isArchived = !note.isArchived;
+    note.save();
 
-    res.json({message: note.isArchived ? "Note archived" : "Note restored"})
-    
-  }catch(err){
-    res.status(500).json({message: "ERROR: " + err.message})
+    res.json({ message: note.isArchived ? "Note archived" : "Note restored" });
+  } catch (err) {
+    res.status(500).json({ message: "ERROR: " + err.message });
   }
-})
+});
+
+// fetch pinned notes
+router.get("/pin", userAuth, async (req, res) => {
+  try {
+    const notes = await Note.find({
+      userId: req.user_.id,
+      isArchived: false,
+    }).sort({ isPinned: -1, createdAt: -1 });
+
+    if (notes.length === 0) {
+      return res.status(200).json({ message: "No pinned notes found", notes: [] });
+    }
+
+    res.json({ message: "Fetched pinned notes successfully", notes });
+    
+  } catch (err) {
+    res.status(500).json({ message: "ERROR: " + err.message });
+  }
+});
 
 module.exports = router;
 
