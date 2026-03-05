@@ -6,6 +6,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
 import { loginSuccess } from "../utils/userSlice";
 import { useSelector } from "react-redux";
+import NoteCard from "./NoteCard";
 
 const Note = () => {
   const [notes, setNotes] = useState([]);
@@ -58,12 +59,20 @@ const Note = () => {
     try {
       // const token = localStorage.getItem("token");
 
+      // Show confirmation alert
+      const isConfirmed = window.confirm(
+        "Are you sure you want to delete this item?",
+      );
+
+      // If user clicks Cancel, stop here
+      if (!isConfirmed) return;
+
       const res = await axiosInstance.delete(`/notes/${id}`);
       setNotes((prevNotes) => prevNotes.filter((note) => note._id !== id));
       setDeleteShowToast(true);
       setTimeout(() => {
-        setShowToast(false);
-      }, 3000);
+        setDeleteShowToast(false);
+      }, 2000);
     } catch (err) {
       console.error(err);
     }
@@ -78,6 +87,16 @@ const Note = () => {
           note._id === updatedNote._id ? updatedNote : note,
         ),
       );
+
+      setToastMessage(
+        action === "pin"
+          ? "Note pinned successfully"
+          : "Note archived successfully",
+      );
+      setShowToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+      }, 2000);
     } catch (err) {
       console.error(err);
     }
@@ -88,13 +107,18 @@ const Note = () => {
       ? notes.filter((note) => !note.isArchived)
       : notes.filter((note) => note.isArchived);
 
+  const pinnedNotes = filteredNotes.filter((note) => note.isPinned);
+  const otherNotes = filteredNotes.filter((note) => !note.isPinned);
+
   return (
     <>
       <div className="my-10 flex bg-slate-800 rounded-lg p-1 w-fit mx-auto">
         <button
           onClick={() => setView("active")}
           className={`px-4 py-2 rounded-md ${
-            view === "active" && "bg-blue-600 text-white"
+            view === "active"
+              ? "bg-blue-600 text-white"
+              : "bg-slate-700 text-gray-300"
           }`}
         >
           Notes
@@ -103,7 +127,9 @@ const Note = () => {
         <button
           onClick={() => setView("archived")}
           className={`px-4 py-2 rounded-md ${
-            view === "archived" && "bg-blue-600 text-white"
+            view === "archived"
+              ? "bg-blue-600 text-white"
+              : "bg-slate-700 text-gray-300"
           }`}
         >
           Archived
@@ -119,63 +145,41 @@ const Note = () => {
           </p>
         ) : (
           <div className="max-w-7xl mx-auto px-6 py-8">
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredNotes.map(({ title, description, _id, isPinned }) => (
-                <div
-                  key={_id}
-                  className="bg-gradient-to-br from-slate-800 to-slate-900 
-                    border border-slate-700 rounded-xl p-5 shadow-lg hover:shadow-xl hover:-translate-y-1 transition duration-300 flex flex-col justify-between"
-                >
-                  {/* NOTE CONTENT */}
-                  <Link to={`/note/${_id}`}>
-                    <div>
-                      <div className="flex justify-between items-start">
-                        <h2 className="text-lg font-semibold text-white">
-                          {title}
-                        </h2>
+            {/* PINNED NOTES */}
+            {pinnedNotes.length > 0 && (
+              <>
+                <h2 className="text-slate-400 text-sm mb-4">📌 PINNED</h2>
 
-                        {isPinned && <span>📌</span>}
-                      </div>
-
-                      <p className="text-slate-400 mt-2 text-sm break-words line-clamp-3">
-                        {description}
-                      </p>
-                    </div>
-                  </Link>
-
-                  {/* ACTION BUTTONS */}
-                  <div className="flex gap-2 mt-6 flex-wrap">
-                    <Link
-                      to={`/edit/${_id}`}
-                      className="px-3 py-1 text-sm rounded-md bg-blue-500 hover:bg-blue-600 text-white transition"
-                    >
-                      Edit
-                    </Link>
-
-                    <button
-                      onClick={() => handleDelete(_id)}
-                      className="px-3 py-1 text-sm rounded-md bg-red-500 hover:bg-red-600 text-white transition"
-                    >
-                      Delete
-                    </button>
-
-                    <button
-                      onClick={() => updateNote(_id, "pin")}
-                      className="px-3 py-1 text-sm rounded-md bg-slate-700 hover:bg-slate-600 text-white transition"
-                    >
-                      📌
-                    </button>
-
-                    <button
-                      onClick={() => updateNote(_id, "archive")}
-                      className="px-3 py-1 text-sm rounded-md bg-slate-700 hover:bg-slate-600 text-white transition"
-                    >
-                      📦
-                    </button>
-                  </div>
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-10">
+                  {pinnedNotes.map((note) => (
+                    <NoteCard
+                      key={note._id}
+                      {...note}
+                      handleDelete={handleDelete}
+                      updateNote={updateNote}
+                    />
+                  ))}
                 </div>
-              ))}
-            </div>
+              </>
+            )}
+
+            {/* OTHER NOTES */}
+            {otherNotes.length > 0 && (
+              <>
+                <h2 className="text-slate-400 text-sm mb-4">OTHERS</h2>
+
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                  {otherNotes.map((note) => (
+                    <NoteCard
+                      key={note._id}
+                      {...note}
+                      handleDelete={handleDelete}
+                      updateNote={updateNote}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>
