@@ -157,15 +157,6 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
 //   },
 // );
 
-const express = require("express");
-const paymentRouter = express.Router();
-const {
-  validateWebhookSignature,
-} = require("razorpay/dist/utils/razorpay-utils");
-
-const Payment = require("../models/payment");
-const User = require("../models/user");
-
 paymentRouter.post("/payment/webhook", async (req, res) => {
   try {
     console.log("========== WEBHOOK START ==========");
