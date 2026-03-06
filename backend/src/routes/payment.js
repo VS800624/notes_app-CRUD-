@@ -64,8 +64,8 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
       // It will validate whether my webhook is correct or not
       // Verify signature with RAW body
       const isWebhookValid = validateWebhookSignature(
-        // JSON.stringify(req.body),
-        req.body,
+        JSON.stringify(req.body),
+        // req.body,
         webhookSignature,
         process.env.RAZORPAY_WEBHOOK_SECRET,
       );
@@ -88,6 +88,7 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
       // Update my payment status in DB
       const paymentDetails = req.body.payload.payment.entity;
       // const paymentDetails = body.payload.payment.entity;
+      console.log(paymentEntity);
 
       console.log("Payment Details:", JSON.stringify(paymentDetails, null, 2));
       console.log("Order ID from Razorpay:", paymentDetails.order_id);
