@@ -82,6 +82,9 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
     const  paymentDetails = req.body.payload.payment.entity
     // const  paymentDetails = body.payload.payment.entity
     
+    console.log("Payment Details:", JSON.stringify(paymentDetails, null, 2))
+    console.log("Order ID from Razorpay:", paymentDetails.order_id)
+
     
     const payment = await Payment.findOne({orderId: paymentDetails.order_id})
 
