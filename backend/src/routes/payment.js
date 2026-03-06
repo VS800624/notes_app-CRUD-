@@ -50,7 +50,10 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
 });
 
 // Razorpay webhook — RAW BODY (must be first)
-paymentRouter.post("/payment/webhook", express.raw({ type: "application/json" }), async (req, res) => {
+paymentRouter.post(
+  "/payment/webhook",
+  express.raw({ type: "application/json" }),
+  async (req, res) => {
     // paymentRouter.post("/payment/webhook",  async (req, res) => {
     try {
       console.log("Webhook start");
@@ -110,9 +113,12 @@ paymentRouter.post("/payment/webhook", express.raw({ type: "application/json" })
       //   return res.status(404).json({ message: "Payment not found" });
       // }
 
-      if (!payment || paymentDetails.status !== "captured") {
-        console.log("Ignoring webhook - payment not found or not captured");
-        return res.status(200).json({ message: "Ignoring webhook" });
+      console.log("PaymentDetails status:", paymentDetails.status);
+      console.log("Payment found:", payment);
+
+      if (!payment) {
+        console.log("Payment not found in DB yet");
+        return res.status(200).json({ message: "Payment not found" });
       }
 
       // Handle FAILED payment
@@ -125,27 +131,29 @@ paymentRouter.post("/payment/webhook", express.raw({ type: "application/json" })
         return res.status(200).json({ message: "Payment failed recorded" });
       }
 
-      // Prevent duplicate webhook process
       if (payment.status === "captured") {
         console.log("⚠️ Payment already captured earlier");
         return res.status(200).json({ message: "Already processed" });
       }
 
-      if (event === "payment.captured") {
-        // Update payment
+      if (
+        event === "payment.captured" &&
+        paymentDetails.status === "captured"
+      ) {
         payment.status = "captured";
         await payment.save();
 
         console.log("Payment status updated to CAPTURED");
 
-        // Upgrade user
         const user = await User.findById(payment.userId);
+
         console.log("User found:", user);
-        if (!user) return res.status(404).json({ message: "User not found" });
 
         user.isPremium = true;
         user.membershipType = payment.notes.membershipType;
+
         await user.save();
+
         console.log("🎉 User upgraded to PREMIUM");
       }
       console.log("========== WEBHOOK END ==========");
