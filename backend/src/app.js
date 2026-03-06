@@ -26,7 +26,17 @@ app.use(
 
   // parsing
   app.use(cookieParser())
-  const paymentRouter = require("./routes/payment");
+  // const paymentRouter = require("./routes/payment");
+  const {paymentRouter} = require("./routes/payment")
+  const { webhookHandler } = require("./routes/payment");
+  // WEBHOOK FIRST (RAW BODY)
+app.post(
+  "/payment/webhook",
+  express.raw({ type: "application/json" }),
+  webhookHandler
+);
+
+// THEN JSON PARSER
   app.use(express.json())
 
 
