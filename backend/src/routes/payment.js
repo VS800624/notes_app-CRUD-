@@ -48,8 +48,8 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
 });
 
 // Razorpay webhook — RAW BODY (must be first)
-// paymentRouter.post("/payment/webhook",express.raw({ type: "application/json" }), async(req,res) => {
-  paymentRouter.post("/payment/webhook",  async (req, res) => {
+paymentRouter.post("/payment/webhook",express.raw({ type: "application/json" }), async(req,res) => {
+  // paymentRouter.post("/payment/webhook",  async (req, res) => {
   try{
     console.log("Webhook start");
     const webhookSignature = req.header("X-Razorpay-Signature")
@@ -61,8 +61,8 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
     // It will validate whether my webhook is correct or not 
     // Verify signature with RAW body
     const isWebhookValid = validateWebhookSignature(
-      JSON.stringify(req.body),
-      // req.body,
+      // JSON.stringify(req.body),
+      req.body,
       webhookSignature,
       process.env.RAZORPAY_WEBHOOK_SECRET
     )
