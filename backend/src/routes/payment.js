@@ -83,27 +83,37 @@ paymentRouter.post(
       //  NOW parse the body
       const body = JSON.parse(req.body.toString());
       // Use parsed body safely
-       const event = body.event;
+      const event = body.event;
       // const event = req.body.event;
       console.log("Event Type:", event);
 
       // Update my payment status in DB
       // const paymentDetails = req.body.payload.payment.entity;
-      const  paymentDetails = body.payload.payment.entity
+      const paymentDetails = body.payload.payment.entity;
 
       console.log("Payment Details:", JSON.stringify(paymentDetails, null, 2));
       console.log("Order ID from Razorpay:", paymentDetails.order_id);
       console.log("Payment ID:", paymentDetails.id);
 
       console.log("Searching payment for orderId:", paymentDetails.order_id);
+
+      console.log("DB Orders:");
+      const allPayments = await Payment.find({});
+      console.log(allPayments.map((p) => p.orderId));
+
       const payment = await Payment.findOne({
         orderId: paymentDetails.order_id,
       });
 
       console.log("Payment found in DB:", payment);
 
-      if (!payment) {
-        return res.status(404).json({ message: "Payment not found" });
+      // if (!payment) {
+      //   return res.status(404).json({ message: "Payment not found" });
+      // }
+
+      if (!payment || paymentDetails.status !== "captured") {
+        console.log("Ignoring webhook - payment not found or not captured");
+        return res.status(200).json({ message: "Ignoring webhook" });
       }
 
       // Handle FAILED payment
