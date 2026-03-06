@@ -16,7 +16,7 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
     const order = await razorPayInstance.orders.create({
       amount: membershipAmount[membershipType] * 100, //this value is in lower denomination of currency(this is in paisa)
       currency: "INR",
-      receipt: "receipt#1",
+      receipt: `receipt_${Date.now()}`,
       notes: {
         firstName,
         lastName,
@@ -46,10 +46,11 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
 });
 
 // Razorpay webhook — RAW BODY (must be first)
-// paymentRouter.post("/payment/webhook",express.raw({ type: "application/json" }), async(req,res) => {
-  paymentRouter.post("/payment/webhook",  async (req, res) => {
+paymentRouter.post("/payment/webhook",express.raw({ type: "application/json" }), async(req,res) => {
+  // paymentRouter.post("/payment/webhook",  async (req, res) => {
   try{
-    console.log(req.body.toString())
+    console.log("Webhook received");
+    console.log(req.body);
     const webhookSignature = req.header("X-Razorpay-Signature")
     // or const webhookSignature = req.get("X-Razorpay-Signature")
 
