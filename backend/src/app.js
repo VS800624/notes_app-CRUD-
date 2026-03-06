@@ -25,15 +25,16 @@ app.use(
 // );
 
   // parsing
-  app.use(express.json())
   app.use(cookieParser())
+  const paymentRouter = require("./routes/payment");
+  app.use(express.json())
 
 
 
 // Import routers
 const notesRouter = require("./routes/notes")
 const authRouter = require("./routes/auth");
-const paymentRouter = require("./routes/payment");
+
 
 
 // Use Routers
