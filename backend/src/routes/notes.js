@@ -144,7 +144,7 @@ router.put("/notes/pin/:id", userAuth, async (req, res) => {
 
     const note = await Note.findOne({
       _id: req.params.id,
-      userId: req.user_.id,
+      userId: req.user._id,
     });
 
     if (!note) {
@@ -172,7 +172,7 @@ router.put("/notes/archive/:id", userAuth, async (req, res) => {
 
     const note = await Note.findOne({
       _id: req.params.id,
-      userId: req.user_.id,
+      userId: req.user._id,
     });
 
     if (!note) {
@@ -192,7 +192,7 @@ router.put("/notes/archive/:id", userAuth, async (req, res) => {
 router.get("/notes/pin", userAuth, async (req, res) => {
   try {
     const notes = await Note.find({
-      userId: req.user_.id,
+      userId: req.user._id,
       isArchived: false,
     }).sort({ isPinned: -1, createdAt: -1 });
 
