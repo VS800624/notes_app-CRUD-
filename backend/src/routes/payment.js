@@ -36,6 +36,8 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
       notes: order.notes,
     });
 
+    console.log("Order created from Razorpay:", order)
+  console.log("Saved OrderId in DB:", order.id)
     const savedPayment = await payment.save();
 
     // return back my order details to frontend
@@ -82,10 +84,12 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
     const  paymentDetails = req.body.payload.payment.entity
     // const  paymentDetails = body.payload.payment.entity
     
-    console.log("Payment Details:", JSON.stringify(paymentDetails, null, 2))
-    console.log("Order ID from Razorpay:", paymentDetails.order_id)
-
     
+console.log("Payment Details:", JSON.stringify(paymentDetails, null, 2))
+console.log("Order ID from Razorpay:", paymentDetails.order_id)
+console.log("Payment ID:", paymentDetails.id)
+
+    console.log("Searching payment for orderId:", paymentDetails.order_id)
     const payment = await Payment.findOne({orderId: paymentDetails.order_id})
 
     console.log("Payment found in DB:", payment);
