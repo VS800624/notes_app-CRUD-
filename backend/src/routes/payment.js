@@ -157,111 +157,103 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
 //   },
 // );
 
-paymentRouter.post("/payment/webhook", async (req, res) => {
-  try {
-    console.log("========== WEBHOOK START ==========");
+paymentRouter.post(
+  "/payment/webhook",
+  express.raw({ type: "application/json" }),
+  async (req, res) => {
+    try {
+      console.log("========== WEBHOOK START ==========");
 
-    // Get Razorpay signature
-    const webhookSignature = req.header("X-Razorpay-Signature");
-    console.log("Webhook Signature:", webhookSignature);
+      const webhookSignature = req.header("X-Razorpay-Signature");
+      console.log("Webhook Signature:", webhookSignature);
 
-    console.log("Webhook Body:", JSON.stringify(req.body, null, 2));
+      const rawBody = req.body.toString();
+      console.log("Raw Body:", rawBody);
 
-    // Validate webhook signature
-    const isWebhookValid = validateWebhookSignature(
-      JSON.stringify(req.body),
-      webhookSignature,
-      process.env.RAZORPAY_WEBHOOK_SECRET
-    );
+      const isWebhookValid = validateWebhookSignature(
+        rawBody,
+        webhookSignature,
+        process.env.RAZORPAY_WEBHOOK_SECRET
+      );
 
-    console.log("Is Webhook Valid:", isWebhookValid);
+      console.log("Is Webhook Valid:", isWebhookValid);
 
-    if (!isWebhookValid) {
-      console.log("Webhook signature validation FAILED");
-      return res.status(400).json({ message: "Invalid webhook signature" });
-    }
-
-    // Extract event and payment details
-    const event = req.body.event;
-    const paymentDetails = req.body.payload.payment.entity;
-
-    console.log("Event Type:", event);
-    console.log("Payment ID:", paymentDetails.id);
-    console.log("Order ID:", paymentDetails.order_id);
-    console.log("Payment Status:", paymentDetails.status);
-
-    // Find payment in DB
-    console.log("Searching payment in DB for orderId:", paymentDetails.order_id);
-
-    const payment = await Payment.findOne({
-      orderId: paymentDetails.order_id,
-    });
-
-    if (!payment) {
-      console.log("Payment not found in database");
-      return res.status(404).json({ message: "Payment not found" });
-    }
-
-    console.log("Payment found in DB:", payment);
-
-    // Handle failed payment
-    if (event === "payment.failed") {
-      payment.status = "failed";
-      await payment.save();
-
-      console.log("Payment marked as FAILED in DB");
-
-      return res.status(200).json({ message: "Payment failure recorded" });
-    }
-
-    // Prevent duplicate webhook processing
-    if (payment.status === "captured") {
-      console.log("Payment already captured earlier. Ignoring duplicate webhook.");
-      return res.status(200).json({ message: "Already processed" });
-    }
-
-    // Handle successful payment
-    if (event === "payment.captured" && paymentDetails.status === "captured") {
-      console.log("Processing captured payment...");
-
-      payment.status = "captured";
-      await payment.save();
-
-      console.log("Payment status updated to CAPTURED");
-
-      // Upgrade user
-      const user = await User.findById(payment.userId);
-
-      if (!user) {
-        console.log("User not found in DB");
-        return res.status(404).json({ message: "User not found" });
+      if (!isWebhookValid) {
+        console.log("Webhook signature invalid");
+        return res.status(400).json({ message: "Invalid webhook signature" });
       }
 
-      console.log("User found:", user.emailId);
+      const body = JSON.parse(rawBody);
 
-      user.isPremium = true;
-      user.membershipType = payment.notes.membershipType;
+      const event = body.event;
+      const paymentDetails = body.payload.payment.entity;
 
-      await user.save();
+      console.log("Event:", event);
+      console.log("Payment ID:", paymentDetails.id);
+      console.log("Order ID:", paymentDetails.order_id);
+      console.log("Payment Status:", paymentDetails.status);
 
-      console.log("User upgraded to PREMIUM successfully");
+      const payment = await Payment.findOne({
+        orderId: paymentDetails.order_id,
+      });
+
+      if (!payment) {
+        console.log("Payment not found in DB");
+        return res.status(404).json({ message: "Payment not found" });
+      }
+
+      console.log("Payment found:", payment);
+
+      if (event === "payment.failed") {
+        payment.status = "failed";
+        await payment.save();
+
+        console.log("Payment marked FAILED");
+
+        return res.status(200).json({ message: "Payment failed recorded" });
+      }
+
+      if (payment.status === "captured") {
+        console.log("Duplicate webhook ignored");
+        return res.status(200).json({ message: "Already processed" });
+      }
+
+      if (event === "payment.captured" && paymentDetails.status === "captured") {
+        payment.status = "captured";
+        await payment.save();
+
+        console.log("Payment updated to CAPTURED");
+
+        const user = await User.findById(payment.userId);
+
+        if (!user) {
+          console.log("User not found");
+          return res.status(404).json({ message: "User not found" });
+        }
+
+        user.isPremium = true;
+        user.membershipType = payment.notes.membershipType;
+
+        await user.save();
+
+        console.log("User upgraded to PREMIUM");
+      }
+
+      console.log("========== WEBHOOK END ==========");
+
+      res.status(200).json({
+        message: "Webhook processed successfully",
+      });
+    } catch (err) {
+      console.log("Webhook Error:", err);
+
+      res.status(500).json({
+        success: false,
+        message: err.message,
+      });
     }
-
-    console.log("========== WEBHOOK END ==========");
-
-    return res.status(200).json({
-      message: "Webhook received successfully",
-    });
-
-  } catch (err) {
-    console.log("Webhook Error:", err);
-
-    return res.status(500).json({
-      success: false,
-      message: err.message,
-    });
   }
-});
+);
 
 paymentRouter.get("/premium/verify", userAuth, async (req, res) => {
   const user = req.user;
