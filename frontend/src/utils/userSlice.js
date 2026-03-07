@@ -5,6 +5,7 @@ const userSlice = createSlice({
   name: "user",
   initialState: {
     isAuthenticated: false,
+    isPremium : false,
     user: null,
     token: null,
   },
@@ -18,11 +19,14 @@ const userSlice = createSlice({
       state.isAuthenticated = false,
       state.user = null,
       state.token = null
+    },
+    setPremiumStatus: (state,action) => {
+      state.isPremium = action.payload
     }
   }
 })
 
-export const {loginSuccess, logout} = userSlice.actions
+export const {loginSuccess, logout, setPremiumStatus} = userSlice.actions
 // here we are taking out these actions individually, and exporting it.
 export default userSlice.reducer
 

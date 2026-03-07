@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../utils/axiosInstance";
+import { useDispatch } from "react-redux";
 
 const Premium = () => {
-  const [isUserPremium, setIsUserPremium] = useState(false);
+  // const [isUserPremium, setIsUserPremium] = useState(false);
+
+  const dispatch = useDispatch()
+  const isUserPremium = useSelector((state) => state.user.isPremium);
 
   useEffect(() => {
     verifyPremiumUser();
@@ -13,7 +17,8 @@ const Premium = () => {
     console.log("Premium verify response:", res.data);
     
     if (res.data.isPremium) {
-      setIsUserPremium(true);
+      // setIsUserPremium(true);
+      dispatch(setIsUserPremium(res.data.isPremium))
     }
   };
 
