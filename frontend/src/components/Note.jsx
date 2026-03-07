@@ -4,8 +4,8 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
-import { loginSuccess } from "../utils/userSlice";
-import { useSelector } from "react-redux";
+import { loginSuccess, setPremiumStatus } from "../utils/userSlice";
+import { useDispatch, useSelector } from "react-redux";
 import NoteCard from "./NoteCard";
 
 const Note = () => {
@@ -18,6 +18,7 @@ const Note = () => {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [view, setView] = useState("active");
+  const dispatch  = useDispatch()
 
   const getNotes = async () => {
     try {
@@ -31,6 +32,20 @@ const Note = () => {
       setNotes(res.data.data);
     } catch (err) {
       console.error(err);
+    }
+  };
+
+   useEffect(() => {
+    verifyPremiumUser();
+  }, []);
+
+  const verifyPremiumUser = async () => {
+    const res = await axiosInstance.get("/premium/verify");
+    console.log("Premium verify response:", res.data);
+    
+    if (res.data.isPremium) {
+      // setIsUserPremium(true);
+      dispatch(setPremiumStatus(res.data.isPremium))
     }
   };
 

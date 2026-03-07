@@ -1,26 +1,27 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../utils/axiosInstance";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setPremiumStatus } from "../utils/userSlice";
 
 const Premium = () => {
   // const [isUserPremium, setIsUserPremium] = useState(false);
 
-  const dispatch = useDispatch()
+  // const dispatch = useDispatch()
   const isUserPremium = useSelector((state) => state.user.isPremium);
 
-  useEffect(() => {
-    verifyPremiumUser();
-  }, []);
+  // useEffect(() => {
+  //   verifyPremiumUser();
+  // }, []);
 
-  const verifyPremiumUser = async () => {
-    const res = await axiosInstance.get("/premium/verify");
-    console.log("Premium verify response:", res.data);
+  // const verifyPremiumUser = async () => {
+  //   const res = await axiosInstance.get("/premium/verify");
+  //   console.log("Premium verify response:", res.data);
     
-    if (res.data.isPremium) {
-      // setIsUserPremium(true);
-      dispatch(setIsUserPremium(res.data.isPremium))
-    }
-  };
+  //   if (res.data.isPremium) {
+  //     // setIsUserPremium(true);
+  //     dispatch(setPremiumStatus(res.data.isPremium))
+  //   }
+  // };
 
   const handleBuyClick = async (type) => {
     const order = await axiosInstance.post("/payment/create", {
