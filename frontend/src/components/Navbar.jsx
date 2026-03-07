@@ -28,7 +28,7 @@ function Navbar() {
   };
 
   return (
-    <nav className="w-full bg-white/90 backdrop-blur border-b shadow-sm fixed top-0 left-0 z-50">
+    <nav className="w-full bg-slate-900 border-b border-slate-700 shadow-sm fixed top-0 left-0 z-50">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link
@@ -44,13 +44,13 @@ function Navbar() {
           className="md:hidden flex flex-col  gap-1"
         >
           <span
-            className={`h-0.5 w-6 bg-black transition ${isOpen && "rotate-45 translate-y-1.5"}`}
+            className={`h-0.5 w-6 bg-white transition ${isOpen && "rotate-45 translate-y-1.5"}`}
           ></span>
           <span
-            className={`h-0.5 w-6 bg-black transition ${isOpen && "opacity-0"}`}
+            className={`h-0.5 w-6 bg-white transition ${isOpen && "opacity-0"}`}
           ></span>
           <span
-            className={`h-0.5 w-6 bg-black transition ${isOpen && "-rotate-45 -translate-y-1.5"}`}
+            className={`h-0.5 w-6 bg-white transition ${isOpen && "-rotate-45 -translate-y-1.5"}`}
           ></span>
         </button>
 

@@ -121,8 +121,8 @@ const Note = () => {
   const otherNotes = filteredNotes.filter((note) => !note.isPinned);
 
   return (
-    <>
-      <div className="my-10 flex bg-slate-800 rounded-lg p-1 w-fit mx-auto">
+    <div className="min-h-screen bg-slate-800 p-10">
+      <div className="flex bg-slate-800 rounded-lg p-1 w-fit mx-auto">
         <button
           onClick={() => setView("active")}
           className={`px-4 py-2 rounded-md ${
@@ -146,9 +146,9 @@ const Note = () => {
         </button>
       </div>
 
-      <div className="px-4 my-10">
+      <div className="min-h-screen bg-slate-800 px-4 my-10">
         {loading ? (
-          <p className="text-center my-10">Loading...</p>
+          <p className="text-center text-white my-10">Loading...</p>
         ) : notes.length === 0 ? (
           <p className="flex justify-center   text-xl font-semibold">
             No notes found!
@@ -196,7 +196,7 @@ const Note = () => {
 
       {showDeleteToast && (
         <div className="toast toast-top toast-center my-10  z-50">
-          <div className="alert alert-error">
+          <div className="alert alert-error alert-outline">
             <span>Note deleted successfully</span>
           </div>
         </div>
@@ -204,12 +204,12 @@ const Note = () => {
 
       {showToast && (
         <div className="toast toast-top toast-center z-50">
-          <div className="alert alert-success">
+          <div className="alert alert-success alert-outline">
             <span>{toastMessage}</span>
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 
