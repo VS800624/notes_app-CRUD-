@@ -102,12 +102,7 @@ const Note = () => {
           note._id === updatedNote._id ? updatedNote : note,
         ),
       );
-
-      setToastMessage(
-        action === "pin"
-          ? "Note pinned successfully"
-          : "Note archived successfully",
-      );
+     setToastMessage(res.data.message)
       setShowToast(true);
       setTimeout(() => {
         setShowToast(false);

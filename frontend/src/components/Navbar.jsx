@@ -11,6 +11,14 @@ function Navbar() {
 
   const handleLogout = async () => {
     try {
+      // Show confirmation alert
+      const isConfirmed = window.confirm(
+        "Are you sure you want to logout?",
+      );
+
+      // If user clicks Cancel, stop here
+      if (!isConfirmed) return;
+      
       await axiosInstance.post("/logout");
       dispatch(logout());
       navigate("/login");
@@ -82,7 +90,7 @@ function Navbar() {
 
       {/* Mobile Menu */}
       <div
-        className={`md:hidden absolute right-4 top-16 bg-white border rounded-lg shadow-lg transition-all duration-300 ${
+        className={`md:hidden absolute right-4 top-16 mt-4  border rounded-lg shadow-lg transition-all duration-300 ${
           isOpen
             ? "opacity-100 scale-100"
             : "opacity-0 scale-95 pointer-events-none"

@@ -1,6 +1,10 @@
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 const NoteCard = ({ title, description, _id, isPinned, handleDelete, updateNote }) => {
+
+  const isUserPremium = useSelector((store) => store.user.isPremium)
+  
   return (
     <div
       className="bg-gradient-to-br from-slate-800 to-slate-900 
@@ -44,14 +48,15 @@ const NoteCard = ({ title, description, _id, isPinned, handleDelete, updateNote 
           onClick={() => updateNote(_id, "pin")}
           className="px-3 py-1 text-sm rounded-md bg-slate-700 hover:bg-slate-600 text-white transition"
         >
-          📌
+          📌 
         </button>
 
         <button
           onClick={() => updateNote(_id, "archive")}
+          disabled={!isUserPremium}
           className="px-3 py-1 text-sm rounded-md bg-slate-700 hover:bg-slate-600 text-white transition"
         >
-          📦
+          📦 (Premium Feature)
         </button>
       </div>
     </div>
