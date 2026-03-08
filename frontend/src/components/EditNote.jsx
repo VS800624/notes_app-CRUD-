@@ -21,8 +21,8 @@ const EditNote = () => {
           `${BASE_URL}/note/${id}`
           // {withCredentials: true}
         );
-        setTitle(res.data.data.title);
-        setDescription(res.data.data.description);
+        setTitle(res.data.note.title);
+        setDescription(res.data.note.description);
       } catch (err) {
         setError("Failed to load note");
       }
