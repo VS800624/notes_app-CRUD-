@@ -9,16 +9,33 @@ import CreateNote from "./components/CreateNote.jsx";
 import EditNote from "./components/EditNote.jsx";
 import Login from "./components/login.jsx";
 import Body from "./components/Body.jsx";
-import { Provider } from "react-redux";
+import { Provider, useDispatch } from "react-redux";
 import appStore from "./utils/appStore.js";
 import NotFound from "./components/NotFound.jsx";
 import Premium from "./components/Premium.jsx";
 import SingleNote from "./components/SingleNote.jsx";
+import axiosInstance from "./utils/axiosInstance.js";
+import { setPremiumStatus } from "./utils/userSlice.js";
+import { useEffect } from "react";
 
 function App() {
+  const dispatch = useDispatch()
+
+    const verifyPremiumUser = async () => {
+      const res = await axiosInstance.get("/premium/verify");
+      console.log("Premium verify response:", res.data);
+      
+      if (res.data.isPremium) {
+        dispatch(setPremiumStatus(res.data.isPremium))
+      }
+    };
+  
+     useEffect(() => {
+      verifyPremiumUser();
+    }, []);
+  
   return (
     <>
-      <Provider store={appStore}>
         <BrowserRouter basename="/">
           <Routes>
             {/*  Public Route (No Navbar) */}
@@ -37,7 +54,6 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
-      </Provider>
     </>
   );
 }

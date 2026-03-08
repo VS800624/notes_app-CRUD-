@@ -34,20 +34,6 @@ const Note = () => {
       console.error(err);
     }
   }; 
-
-  const verifyPremiumUser = async () => {
-    const res = await axiosInstance.get("/premium/verify");
-    console.log("Premium verify response:", res.data);
-    
-    if (res.data.isPremium) {
-      // setIsUserPremium(true);
-      dispatch(setPremiumStatus(res.data.isPremium))
-    }
-  };
-
-   useEffect(() => {
-    verifyPremiumUser();
-  }, []);
   
   useEffect(() => {
     if (!isLoggedIn) return;
