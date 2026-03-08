@@ -33,11 +33,7 @@ const Note = () => {
     } catch (err) {
       console.error(err);
     }
-  };
-
-   useEffect(() => {
-    verifyPremiumUser();
-  }, []);
+  }; 
 
   const verifyPremiumUser = async () => {
     const res = await axiosInstance.get("/premium/verify");
@@ -49,6 +45,10 @@ const Note = () => {
     }
   };
 
+   useEffect(() => {
+    verifyPremiumUser();
+  }, []);
+  
   useEffect(() => {
     if (!isLoggedIn) return;
     getNotes().finally(() => setLoading(false));

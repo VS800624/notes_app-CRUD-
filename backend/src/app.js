@@ -19,15 +19,16 @@ app.use(
 
 // Cookie parser
 app.use(cookieParser());
+app.use(express.json());
 
 // Skip JSON parsing for Razorpay webhook
-app.use((req, res, next) => {
-  if (req.originalUrl === "/api/payment/webhook") {
-    next();
-  } else {
-    express.json()(req, res, next);
-  }
-});
+// app.use((req, res, next) => {
+//   if (req.originalUrl === "/api/payment/webhook") {
+//     next();
+//   } else {
+//     express.json()(req, res, next);
+//   }
+// });
 
 // Import routers
 const notesRouter = require("./routes/notes");

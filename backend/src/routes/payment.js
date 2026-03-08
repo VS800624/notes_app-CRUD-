@@ -50,11 +50,11 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
 });
 
 // Razorpay webhook — RAW BODY (must be first)
-paymentRouter.post(
-  "/payment/webhook",
-  express.raw({ type: "application/json" }),
-  async (req, res) => {
-    // paymentRouter.post("/payment/webhook",  async (req, res) => {
+// paymentRouter.post(
+//   "/payment/webhook",
+//   express.raw({ type: "application/json" }),
+//   async (req, res) => {
+    paymentRouter.post("/payment/webhook",  async (req, res) => {
     try {
       console.log("Webhook start");
       console.log("Body type:", Buffer.isBuffer(req.body));
@@ -67,8 +67,8 @@ paymentRouter.post(
       // It will validate whether my webhook is correct or not
       // Verify signature with RAW body
       const isWebhookValid = validateWebhookSignature(
-        // JSON.stringify(req.body),
-        req.body,
+        JSON.stringify(req.body),
+        // req.body,
         webhookSignature,
         process.env.RAZORPAY_WEBHOOK_SECRET,
       );
@@ -82,15 +82,15 @@ paymentRouter.post(
       }
 
       //  NOW parse the body
-      const body = JSON.parse(req.body.toString());
+      // const body = JSON.parse(req.body.toString());
       // Use parsed body safely
-      const event = body.event;
-      // const event = req.body.event;
+      // const event = body.event;
+      const event = req.body.event;
       console.log("Event Type:", event);
 
       // Update my payment status in DB
-      // const paymentDetails = req.body.payload.payment.entity;
-      const paymentDetails = body.payload.payment.entity;
+      const paymentDetails = req.body.payload.payment.entity;
+      // const paymentDetails = body.payload.payment.entity;
       console.log(paymentDetails);
 
       console.log("Payment Details:", JSON.stringify(paymentDetails, null, 2));
