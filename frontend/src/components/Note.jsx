@@ -18,7 +18,6 @@ const Note = () => {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [view, setView] = useState("active");
-  const dispatch  = useDispatch()
 
   const getNotes = async () => {
     try {

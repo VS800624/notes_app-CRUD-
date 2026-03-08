@@ -15,7 +15,7 @@ A full-stack Notes Application built with the MERN stack.
 - User authentication (JWT)
 - Create, edit, delete notes
 - Archive notes
-- Pin notes (Premium users)
+- Pin notes 
 - Responsive UI
 - Razorpay premium membership
 

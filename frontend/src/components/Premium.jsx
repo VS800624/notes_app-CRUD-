@@ -13,15 +13,15 @@ const Premium = () => {
   //   verifyPremiumUser();
   // }, []);
 
-  // const verifyPremiumUser = async () => {
-  //   const res = await axiosInstance.get("/premium/verify");
-  //   console.log("Premium verify response:", res.data);
+  const verifyPremiumUser = async () => {
+    const res = await axiosInstance.get("/premium/verify");
+    console.log("Premium verify response:", res.data);
     
-  //   if (res.data.isPremium) {
-  //     // setIsUserPremium(true);
-  //     dispatch(setPremiumStatus(res.data.isPremium))
-  //   }
-  // };
+    if (res.data.isPremium) {
+      // setIsUserPremium(true);
+      dispatch(setPremiumStatus(res.data.isPremium))
+    }
+  };
 
   const handleBuyClick = async (type) => {
     const order = await axiosInstance.post("/payment/create", {
